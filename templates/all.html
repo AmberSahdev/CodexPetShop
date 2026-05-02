@@ -4,6 +4,28 @@
 {% block og_title %}All Pets · Codex Pet Shop{% endblock %}
 {% block og_image %}{{ absolute_url(url_for('static', filename='preview.png')) }}{% endblock %}
 {% block og_image_alt %}Codex Pet Shop all pets preview{% endblock %}
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "{{ absolute_url(url_for('index')) }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "All Pets",
+      "item": "{{ canonical_request_url() }}"
+    }
+  ]
+}
+</script>
+{% endblock %}
 {% block content %}
 <style>
   .all-grid {

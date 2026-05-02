@@ -4,6 +4,42 @@
 {% block og_title %}{{ pet.display_name }} · Codex Pet Shop{% endblock %}
 {% block og_image %}{{ absolute_url(pet.screenshot_url or url_for('static', filename='preview.png')) }}{% endblock %}
 {% block og_image_alt %}Preview of {{ pet.display_name }}{% endblock %}
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  "name": "{{ pet.display_name|e }}",
+  "description": "{{ pet.description|e }}",
+  "image": "{{ absolute_url(pet.screenshot_url or url_for('static', filename='preview.png')) }}",
+  "url": "{{ canonical_request_url() }}",
+  "creator": {
+    "@type": "Organization",
+    "name": "Codex Pet Shop"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "{{ absolute_url(url_for('index')) }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{{ pet.display_name|e }}",
+      "item": "{{ canonical_request_url() }}"
+    }
+  ]
+}
+</script>
+{% endblock %}
 {% block content %}
 <style>
   .pet-preview-shell {
