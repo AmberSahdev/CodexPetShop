@@ -24,6 +24,8 @@
   let previewUrl = null;
 
   const state = { nameOk: false, folderOk: false };
+  const spinnerHtml = '<span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent align-[-0.125em]"></span>';
+  const checkHtml = '<img src="/static/icons/check.svg" alt="" class="inline-block h-4 w-4 shrink-0" />';
 
   function setStepActive(i, active) {
     const el = steps[i]; if (!el) return;
@@ -77,7 +79,7 @@
   // ---------- Step 1: name availability ----------
   let checkSeq = 0, checkTimer = null;
   function setNameStatus(text, color, icon) {
-    const iconHtml = icon ? `<span class="material-symbols-outlined text-[16px]">${icon}</span>` : '';
+    const iconHtml = icon === 'check' ? checkHtml : icon === 'spinner' ? spinnerHtml : '';
     nameStatus.innerHTML = iconHtml + (text ? `<span>${text}</span>` : '');
     nameStatus.className = 'text-sm min-w-[6rem] flex items-center gap-1 ' + (color || 'text-base1');
   }
@@ -86,16 +88,16 @@
     nameInput.value = v;
     state.nameOk = false; refresh();
     if (!v) { setNameStatus(''); return; }
-    if (!ID_RE.test(v)) { setNameStatus('invalid', 'text-sol-red', 'error'); return; }
-    setNameStatus('checking…', 'text-base1', 'progress_activity');
+    if (!ID_RE.test(v)) { setNameStatus('invalid', 'text-sol-red'); return; }
+    setNameStatus('checking…', 'text-base1', 'spinner');
     const seq = ++checkSeq;
     try {
       const res = await fetch(`/api/check/${encodeURIComponent(v)}`);
       const data = await res.json();
       if (seq !== checkSeq) return;
-      if (data.available) { setNameStatus('available', 'text-sol-green', 'check_circle'); state.nameOk = true; }
-      else { setNameStatus('taken', 'text-sol-red', 'block'); }
-    } catch (e) { setNameStatus('error', 'text-sol-red', 'error'); }
+      if (data.available) { setNameStatus('available', 'text-sol-green', 'check'); state.nameOk = true; }
+      else { setNameStatus('taken', 'text-sol-red'); }
+    } catch (e) { setNameStatus('error', 'text-sol-red'); }
     refresh();
   }
   nameInput.addEventListener('input', () => {
@@ -169,7 +171,7 @@
     e.preventDefault();
     if (submitBtn.disabled) return;
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="material-symbols-outlined">progress_activity</span> Posting…';
+    submitBtn.innerHTML = `${spinnerHtml} Posting…`;
     submitError.textContent = '';
     const fd = new FormData();
     fd.append('name', nameInput.value);
@@ -184,6 +186,6 @@
       submitError.textContent = `Network error: ${err.message}`;
     }
     submitBtn.disabled = false;
-    submitBtn.innerHTML = '<span class="icon-mask icon-check"></span> Post pet';
+    submitBtn.innerHTML = `${checkHtml} Post pet`;
   });
 })();

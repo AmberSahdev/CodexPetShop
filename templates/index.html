@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block og_title %}Codex Pet Shop{% endblock %}
-{% block meta_description %}A community library of desktop pets for Codex.{% endblock %}
+{% block meta_description %}Cute Pets for Codex.{% endblock %}
 {% block og_image %}{{ absolute_url(url_for('static', filename='preview.png')) }}{% endblock %}
 {% block og_image_alt %}Codex Pet Shop preview{% endblock %}
 {% block content %}
@@ -270,6 +270,7 @@
       </summary>
       <div class="mt-4 text-sm text-base00">
         <ul class="space-y-2 pl-5 list-disc marker:text-base1">
+          <li>Get <a href="https://openai.com/codex/" target="_blank" class="underline">Codex</a></li>
           <li>Click one of the pets in the grid above</li>
           <li>Download the zip file from a pet&apos;s page</li>
           <li>Unzip the file</li>
@@ -291,7 +292,7 @@
             <div class="flex items-center justify-between gap-3 rounded-lg bg-base02 px-3 py-2 text-base3">
               <code class="min-w-0 not-italic">@skill-installer hatch-pet</code>
               <button type="button" class="faq-copy inline-flex shrink-0 items-center gap-1 rounded-md bg-white/10 px-2 py-1 text-[11px] text-base3 transition hover:bg-white/20" data-copy-text="@skill-installer hatch-pet">
-                <span class="material-symbols-outlined text-[14px]">content_copy</span>
+                {{ icon('copy', 'icon text-[14px]') }}
                 <span>Copy</span>
               </button>
             </div>
@@ -301,7 +302,7 @@
             <div class="flex items-center justify-between gap-3 rounded-lg bg-base02 px-3 py-2 text-base3">
               <code class="min-w-0 not-italic">@hatch-pet create a new pet inspired by my recent projects</code>
               <button type="button" class="faq-copy inline-flex shrink-0 items-center gap-1 rounded-md bg-white/10 px-2 py-1 text-[11px] text-base3 transition hover:bg-white/20" data-copy-text="@hatch-pet create a new pet inspired by my recent projects">
-                <span class="material-symbols-outlined text-[14px]">content_copy</span>
+                {{ icon('copy', 'icon text-[14px]') }}
                 <span>Copy</span>
               </button>
             </div>

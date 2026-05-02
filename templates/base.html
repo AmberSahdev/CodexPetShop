@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}Codex Pet Shop{% endblock %}</title>
-  <meta name="description" content="{% block meta_description %}A community library of desktop pets for Codex.{% endblock %}" />
+  <meta name="description" content="{% block meta_description %}{% endblock %}" />
   <link rel="canonical" href="{% block canonical_url %}{{ canonical_request_url() }}{% endblock %}" />
 
   {# Open Graph / Twitter share preview #}
@@ -27,7 +27,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0" rel="stylesheet" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'%3E%3Cpath fill='%23ff5f05' d='M180-475q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29Zm180-160q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29Zm240 0q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29Zm180 160q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM266-75q-45 0-75.5-34.5T160-191q0-52 35.5-91t70.5-77q29-31 50-67.5t50-68.5q22-26 51-43t63-17q34 0 63 16t51 42q28 32 49.5 69t50.5 69q35 38 70.5 77t35.5 91q0 47-30.5 81.5T694-75q-54 0-107-9t-107-9q-54 0-107 9t-107 9Z'/%3E%3C/svg%3E" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
   <script>
@@ -73,7 +72,6 @@
       code, pre { font-family: 'Newsreader', ui-serif, Georgia, serif; font-style: italic; }
       a { color: inherit; }
       ::selection { background: theme('colors.base2'); }
-      .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; font-size: 1em; vertical-align: -3px; }
       .icon { display: inline-block; width: 1em; height: 1em; vertical-align: -0.15em; flex-shrink: 0; }
       .icon-mask { display: inline-block; width: 1em; height: 1em; vertical-align: -0.15em; flex-shrink: 0; background-color: currentColor; -webkit-mask-position: center; mask-position: center; -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
       .icon-check { -webkit-mask-image: url('/static/icons/check.svg'); mask-image: url('/static/icons/check.svg'); }
@@ -122,18 +120,18 @@
          aria-hidden="true" />
   </div>
   
-  <footer class="mx-auto max-w-5xl px-4 pt-4 pb-8 text-xs text-base1">
+  <footer class="mx-auto max-w-5xl px-4 pt-4 pb-8 text-[13px] text-base1">
     <div class="flex items-center justify-between gap-4">
       <span class="min-w-0">
         Made with
-        {{ icon('favorite', 'icon text-[14px] text-sol-red mx-0.5') }}
+        {{ icon('favorite', 'icon text-[15px] text-sol-red mx-0.5') }}
         by <a href="https://ambersah.dev" target="_blank" rel="noopener" class="text-base00 underline underline-offset-4 hover:text-sol-red">AmberSah.dev</a>'s Codex Credits
       </span>
       <span class="inline-flex items-center self-center">
         <span class="mx-1.5 text-base1/80">·</span>
-        <a href="https://x.com/AmberSahdev" target="_blank" rel="noopener" class="relative -top-px inline-flex items-center justify-center rounded-full p-1 text-base00 transition hover:bg-base2 hover:text-sol-red" aria-label="AmberSahdev on X">
-          <svg viewBox="0 0 24 24" aria-hidden="true" class="h-3.5 w-3.5 fill-none stroke-current stroke-[1.7]">
-            <path d="M21 6.5a7.7 7.7 0 0 1-2.2.6 3.8 3.8 0 0 0 1.7-2.1 7.8 7.8 0 0 1-2.4.9 3.8 3.8 0 0 0-6.5 3.4 10.8 10.8 0 0 1-7.8-4 3.8 3.8 0 0 0 1.2 5 3.7 3.7 0 0 1-1.7-.5v.1a3.8 3.8 0 0 0 3 3.7 3.8 3.8 0 0 1-1.7.1 3.8 3.8 0 0 0 3.5 2.6A7.7 7.7 0 0 1 4 18.2a10.8 10.8 0 0 0 5.8 1.7c7 0 10.8-5.8 10.8-10.8v-.5A7.9 7.9 0 0 0 21 6.5Z" stroke-linecap="round" stroke-linejoin="round" />
+        <a href="https://x.com/AmberSahdev" target="_blank" rel="noopener" class="relative -top-px inline-flex items-center justify-center rounded-full p-1 text-[#1d9bf0] transition hover:bg-base2 hover:text-[#1583cc]" aria-label="AmberSahdev on X">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="h-4 w-4 fill-current">
+            <path d="M23 4.57a9.5 9.5 0 0 1-2.74.75 4.78 4.78 0 0 0 2.1-2.64 9.56 9.56 0 0 1-3.03 1.16 4.77 4.77 0 0 0-8.12 4.35A13.53 13.53 0 0 1 1.39 3.15a4.77 4.77 0 0 0 1.48 6.37 4.74 4.74 0 0 1-2.16-.6v.06a4.77 4.77 0 0 0 3.82 4.67 4.8 4.8 0 0 1-2.15.08 4.78 4.78 0 0 0 4.46 3.31A9.57 9.57 0 0 1 1 19.54a13.5 13.5 0 0 0 7.29 2.14c8.75 0 13.53-7.25 13.53-13.53 0-.21 0-.41-.01-.62A9.67 9.67 0 0 0 23 4.57z"/>
           </svg>
         </a>
       </span>

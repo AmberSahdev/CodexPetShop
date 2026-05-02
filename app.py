@@ -52,17 +52,22 @@ def inject_globals():
 
 
 _ICONS_DIR = config.BASE_DIR / "static" / "icons"
-_icon_cache: dict[str, str] = {}
+_icon_cache: dict[str, tuple[int, str]] = {}
 
 
 def _icon(name: str, cls: str = "") -> "Markup":
     """Inline an SVG from static/icons/<name>.svg, injecting Tailwind classes
     onto the root <svg> tag. Returns Markup so Jinja doesn't escape it."""
     from markupsafe import Markup
-    if name not in _icon_cache:
-        path = _ICONS_DIR / f"{name}.svg"
-        _icon_cache[name] = path.read_text() if path.exists() else ""
-    svg = _icon_cache[name]
+    path = _ICONS_DIR / f"{name}.svg"
+    if path.exists():
+        mtime_ns = path.stat().st_mtime_ns
+        cached = _icon_cache.get(name)
+        if not cached or cached[0] != mtime_ns:
+            _icon_cache[name] = (mtime_ns, path.read_text())
+        svg = _icon_cache[name][1]
+    else:
+        svg = ""
     if cls and svg:
         svg = svg.replace("<svg ", f'<svg class="{cls}" ', 1)
     return Markup(svg)

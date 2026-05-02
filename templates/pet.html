@@ -5,6 +5,29 @@
 {% block og_image %}{{ absolute_url(pet.screenshot_url or url_for('static', filename='preview.png')) }}{% endblock %}
 {% block og_image_alt %}Preview of {{ pet.display_name }}{% endblock %}
 {% block content %}
+<style>
+  .pet-preview-shell {
+    position: relative;
+    width: 8.5rem;
+    height: 8.5rem;
+    flex-shrink: 0;
+  }
+
+  .pet-preview-sprite {
+    position: absolute;
+    inset: 0;
+    background-repeat: no-repeat;
+    background-size: 800% 900%;
+    image-rendering: pixelated;
+  }
+
+  @media (min-width: 768px) {
+    .pet-preview-shell {
+      width: 9.5rem;
+      height: 9.5rem;
+    }
+  }
+</style>
 <section class="mx-auto max-w-4xl px-6 pt-8 pb-20">
   <a href="/" class="inline-flex items-center gap-2 rounded-full bg-base2/70 px-3 py-1.5 text-sm text-base00 transition hover:bg-base2 hover:text-base02">
     {{ icon('arrow_back', 'icon text-[18px]') }}
@@ -13,13 +36,15 @@
 
   <div class="mt-6 grid md:grid-cols-2 gap-8 items-start">
     <div class="mx-auto aspect-square max-w-[18rem] md:mx-0 md:max-w-[19rem] panel flex items-center justify-center overflow-hidden">
-      {% if pet.screenshot_url %}
-        <img src="{{ pet.screenshot_url }}" alt="{{ pet.display_name }}"
-             class="h-1/2 w-1/2 object-contain" />
-      {% else %}
-        <img src="{{ pet.spritesheet_url }}" alt="{{ pet.display_name }}"
-             class="h-1/2 w-1/2 object-contain [image-rendering:pixelated]" />
-      {% endif %}
+      <div class="pet-preview-shell">
+        <div
+          class="pet-preview-sprite"
+          role="img"
+          aria-label="{{ pet.display_name }}"
+          data-pet-anim
+          style="background-image: url('{{ pet.spritesheet_url }}');"
+        ></div>
+      </div>
     </div>
 
     <div>
@@ -45,7 +70,7 @@
       </p>
 
       <div class="hairline mt-10 pt-4 text-xs text-base1 flex items-center gap-2">
-        <span class="material-symbols-outlined text-[14px]">schedule</span>
+        {{ icon('schedule', 'icon text-[14px]') }}
         added {{ pet.created_at | relative_time }}
       </div>
     </div>
@@ -69,5 +94,110 @@
       setTimeout(() => { toast.style.opacity = '0'; }, 1600);
     } catch (e) { window.prompt('Copy this link:', url); }
   });
+
+  (() => {
+    const tile = document.querySelector('[data-pet-anim]');
+    if (!tile) return;
+
+    const rowCount = 6;
+    const columnCount = 8;
+    const frameMs = 240;
+
+    const positionFor = (column, row) => {
+      const x = columnCount === 1 ? 0 : (column / (columnCount - 1)) * 100;
+      const y = (row / 8) * 100;
+      return `${x}% ${y}%`;
+    };
+
+    const loadRowFrames = (imageUrl) =>
+      new Promise((resolve) => {
+        const image = new Image();
+        image.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d', { willReadFrequently: true });
+          if (!ctx) {
+            resolve(Array.from({ length: rowCount }, () => [0, 1, 2, 3]));
+            return;
+          }
+
+          canvas.width = image.width;
+          canvas.height = image.height;
+          ctx.drawImage(image, 0, 0);
+
+          const frameWidth = Math.floor(image.width / columnCount);
+          const frameHeight = Math.floor(image.height / 9);
+          const rows = [];
+
+          for (let row = 0; row < rowCount; row += 1) {
+            const frames = [];
+            for (let column = 0; column < columnCount; column += 1) {
+              const x = column * frameWidth;
+              const y = row * frameHeight;
+              const data = ctx.getImageData(x, y, frameWidth, frameHeight).data;
+              let hasPixel = false;
+              for (let i = 3; i < data.length; i += 4) {
+                if (data[i] !== 0) {
+                  hasPixel = true;
+                  break;
+                }
+              }
+              if (hasPixel) {
+                frames.push(column);
+              }
+            }
+            rows.push(frames.length ? frames : [0]);
+          }
+
+          resolve(rows);
+        };
+        image.onerror = () => resolve(Array.from({ length: rowCount }, () => [0, 1, 2, 3]));
+        image.src = imageUrl;
+      });
+
+    const pickNextRow = (frameMap, currentRow) => {
+      const validRows = frameMap
+        .map((frames, row) => ({ row, frames }))
+        .filter(({ frames }) => frames.length > 0);
+      if (!validRows.length) return 0;
+      if (validRows.length === 1) return validRows[0].row;
+      let nextRow = currentRow;
+      while (nextRow === currentRow) {
+        nextRow = validRows[Math.floor(Math.random() * validRows.length)].row;
+      }
+      return nextRow;
+    };
+
+    const playRow = (frameMap, row, repeatCount = 0) => {
+      const frames = frameMap[row];
+      if (!frames || !frames.length) return;
+      let frameIndex = 0;
+      tile.style.backgroundPosition = positionFor(frames[0], row);
+
+      const tick = () => {
+        frameIndex += 1;
+        if (frameIndex < frames.length) {
+          tile.style.backgroundPosition = positionFor(frames[frameIndex], row);
+          window.setTimeout(tick, frameMs);
+          return;
+        }
+
+        if (repeatCount < 1) {
+          window.setTimeout(() => playRow(frameMap, row, repeatCount + 1), frameMs);
+          return;
+        }
+
+        const nextRow = pickNextRow(frameMap, row);
+        window.setTimeout(() => playRow(frameMap, nextRow, 0), frameMs);
+      };
+
+      window.setTimeout(tick, frameMs);
+    };
+
+    const imageUrl = tile.style.backgroundImage.slice(5, -2);
+    loadRowFrames(imageUrl).then((frameMap) => {
+      const startRow = pickNextRow(frameMap, -1);
+      playRow(frameMap, startRow, 0);
+    });
+  })();
 </script>
 {% endblock %}
