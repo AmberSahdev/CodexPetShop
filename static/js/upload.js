@@ -46,9 +46,29 @@
   }
   function showPreview(files) {
     if (!spritesheetFile) return clearPreview();
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    previewUrl = URL.createObjectURL(spritesheetFile);
-    folderPreviewImage.src = previewUrl;
+    if (previewUrl) { URL.revokeObjectURL(previewUrl); previewUrl = null; }
+    // Crop top-left 200x200 of the spritesheet to mirror what the server stores.
+    const url = URL.createObjectURL(spritesheetFile);
+    const img = new Image();
+    img.onload = () => {
+      const SIZE = 200;
+      const canvas = document.createElement('canvas');
+      canvas.width = SIZE; canvas.height = SIZE;
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+      const sw = Math.min(SIZE, img.naturalWidth);
+      const sh = Math.min(SIZE, img.naturalHeight);
+      // Source: top-left sw x sh; destination: scale to 200x200 (matches server behavior).
+      ctx.drawImage(img, 0, 0, sw, sh, 0, 0, SIZE, SIZE);
+      folderPreviewImage.src = canvas.toDataURL('image/png');
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = () => {
+      // Fall back to showing the raw file if decode fails.
+      folderPreviewImage.src = url;
+      previewUrl = url;
+    };
+    img.src = url;
     const petJsonEntry = files.find(f => nameOf(f) === 'pet.json');
     folderPreviewName.textContent = petJsonEntry?.webkitRelativePath?.split('/')[0] || nameInput.value.trim().toLowerCase() || 'Selected pet';
     folderPreview.classList.remove('hidden');

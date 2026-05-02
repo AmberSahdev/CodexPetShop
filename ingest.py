@@ -45,6 +45,8 @@ def ingest_one(pet_dir: Path) -> bool:
 
     if store.exists(pet_id):
         print(f"  ✗ {pet_id}: already exists in store"); return False
+    if store.count_visible() >= config.MAX_PETS:
+        print(f"  ✗ {pet_id}: shop is full ({config.MAX_PETS} pets)"); return False
 
     sprite_bytes = sprite.read_bytes()
     if len(sprite_bytes) > config.MAX_SPRITESHEET_BYTES:

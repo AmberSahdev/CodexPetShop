@@ -204,12 +204,12 @@
     {% for pet in visible_pets %}
       <a href="/p/{{ pet.id }}" class="home-grid-link" title="{{ pet.display_name }}">
         <div class="home-grid-card">
-          {% if pet.screenshot_filename %}
-            <img src="/screenshots/{{ pet.id }}" alt="{{ pet.display_name }}"
+          {% if pet.screenshot_url %}
+            <img src="{{ pet.screenshot_url }}" alt="{{ pet.display_name }}"
                  loading="lazy"
                  class="home-grid-image home-grid-image--cover" />
           {% else %}
-            <img src="/sprites/{{ pet.id }}.webp" alt="{{ pet.display_name }}"
+            <img src="{{ pet.spritesheet_url }}" alt="{{ pet.display_name }}"
                  loading="lazy"
                  class="home-grid-image home-grid-sprite" />
           {% endif %}

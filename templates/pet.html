@@ -9,11 +9,11 @@
 
   <div class="mt-6 grid md:grid-cols-2 gap-8 items-start">
     <div class="mx-auto aspect-square max-w-[18rem] md:mx-0 md:max-w-[19rem] panel flex items-center justify-center overflow-hidden">
-      {% if pet.screenshot_filename %}
-        <img src="/screenshots/{{ pet.id }}" alt="{{ pet.display_name }}"
+      {% if pet.screenshot_url %}
+        <img src="{{ pet.screenshot_url }}" alt="{{ pet.display_name }}"
              class="h-1/2 w-1/2 object-contain" />
       {% else %}
-        <img src="/sprites/{{ pet.id }}.webp" alt="{{ pet.display_name }}"
+        <img src="{{ pet.spritesheet_url }}" alt="{{ pet.display_name }}"
              class="h-1/2 w-1/2 object-contain [image-rendering:pixelated]" />
       {% endif %}
     </div>

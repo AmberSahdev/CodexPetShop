@@ -19,4 +19,7 @@ FEATURED_PETS = ["ruckus"]
 GRID_TOTAL = 8
 GRID_FEATURED_SLOTS = 4
 
+# Hard cap on the number of pets we'll accept. See README "Pet cap" section.
+MAX_PETS = 1000
+
 IP_HASH_SALT = os.environ.get("CPS_IP_SALT", "dev-salt-change-me")

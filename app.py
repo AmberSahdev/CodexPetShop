@@ -1,6 +1,7 @@
 import hashlib
 import io
 import json
+import os
 import re
 import zipfile
 from pathlib import Path
@@ -59,9 +60,18 @@ def relative_time(ts: float) -> str:
     return f"{int(delta // 86400)}d ago"
 
 
+def _decorate(pet: dict) -> dict:
+    """Attach spritesheet_url + screenshot_url so templates don't care about backend."""
+    pet = dict(pet)
+    pet["spritesheet_url"] = store.spritesheet_url(pet)
+    pet["screenshot_url"] = store.screenshot_url(pet)
+    return pet
+
+
 @app.route("/")
 def index():
-    pets = store.grid_pets(config.FEATURED_PETS, config.GRID_TOTAL, config.GRID_FEATURED_SLOTS)
+    pets = [_decorate(p) for p in
+            store.grid_pets(config.FEATURED_PETS, config.GRID_TOTAL, config.GRID_FEATURED_SLOTS)]
     featured_count = sum(1 for p in pets if p["id"] in config.FEATURED_PETS)
     return render_template("index.html", pets=pets, featured_count=featured_count)
 
@@ -81,6 +91,11 @@ def api_check(pet_id: str):
 
 @app.route("/upload", methods=["POST"])
 def upload_submit():
+    if store.count_visible() >= config.MAX_PETS:
+        return jsonify(
+            error=f"The shop is full ({config.MAX_PETS} pets). New uploads are paused."
+        ), 503
+
     name = (request.form.get("name") or "").lower().strip()
     pet_json_file = request.files.get("pet_json")
     sprite_file = request.files.get("spritesheet")
@@ -147,29 +162,30 @@ def healthz():
     return "ok", 200
 
 
-@app.route("/sprites/<pet_id>.webp")
-def sprite_file(pet_id: str):
-    if not ID_RE.match(pet_id):
-        abort(404)
-    path = store.get_spritesheet_path(pet_id)
-    if not path.exists() or not store.exists(pet_id):
-        abort(404)
-    return send_file(path, mimetype="image/webp", max_age=31536000)
+if os.environ.get("CPS_BACKEND", "local").lower() != "gcp":
+    # Local dev: serve spritesheets/screenshots straight from disk.
+    @app.route("/sprites/<pet_id>.webp")
+    def sprite_file(pet_id: str):
+        if not ID_RE.match(pet_id):
+            abort(404)
+        path = store.get_spritesheet_path(pet_id)
+        if not path.exists() or not store.exists(pet_id):
+            abort(404)
+        return send_file(path, mimetype="image/webp", max_age=31536000)
 
-
-@app.route("/screenshots/<pet_id>")
-def screenshot_file(pet_id: str):
-    if not ID_RE.match(pet_id):
-        abort(404)
-    pet = store.get(pet_id)
-    if not pet:
-        abort(404)
-    path = store.get_screenshot_path(pet)
-    if not path:
-        abort(404)
-    mime = {"png": "image/png", "jpg": "image/jpeg", "webp": "image/webp", "gif": "image/gif"}
-    ext = path.suffix.lstrip(".")
-    return send_file(path, mimetype=mime.get(ext, "application/octet-stream"), max_age=31536000)
+    @app.route("/screenshots/<pet_id>")
+    def screenshot_file(pet_id: str):
+        if not ID_RE.match(pet_id):
+            abort(404)
+        pet = store.get(pet_id)
+        if not pet:
+            abort(404)
+        path = store.get_screenshot_path(pet)
+        if not path:
+            abort(404)
+        mime = {"png": "image/png", "jpg": "image/jpeg", "webp": "image/webp", "gif": "image/gif"}
+        ext = path.suffix.lstrip(".")
+        return send_file(path, mimetype=mime.get(ext, "application/octet-stream"), max_age=31536000)
 
 
 @app.route("/p/<pet_id>/bundle.zip")
@@ -178,8 +194,8 @@ def pet_bundle(pet_id: str):
     pet = store.get(pet_id)
     if not pet:
         abort(404)
-    sprite_path: Path = store.get_spritesheet_path(pet_id)
-    if not sprite_path.exists():
+    sprite_data = store.spritesheet_bytes(pet_id)
+    if not sprite_data:
         abort(404)
     manifest = {
         "id": pet["id"],
@@ -190,7 +206,7 @@ def pet_bundle(pet_id: str):
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
         z.writestr("pet.json", json.dumps(manifest, indent=2))
-        z.write(sprite_path, "spritesheet.webp")
+        z.writestr("spritesheet.webp", sprite_data)
     buf.seek(0)
     return send_file(buf, mimetype="application/zip", as_attachment=True,
                      download_name=f"{pet_id}.zip")
@@ -205,7 +221,7 @@ def pet_page(pet_id: str):
     pet = store.get(pet_id)
     if not pet:
         abort(404)
-    return render_template("pet.html", pet=pet)
+    return render_template("pet.html", pet=_decorate(pet))
 
 
 @app.errorhandler(404)
