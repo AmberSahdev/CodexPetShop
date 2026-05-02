@@ -90,12 +90,22 @@
          class="h-2 w-full object-cover"
          aria-hidden="true" />
   </div>
-  <footer class="mx-auto max-w-5xl px-6 pt-4 pb-8 text-xs text-base1 flex items-center justify-between">
+  <footer class="mx-auto max-w-5xl px-6 pt-4 pb-8 text-xs text-base1 flex items-center justify-between gap-4">
     <span class="hidden md:inline">Codex Pet Shop</span>
-    <span>
+    <span class="flex min-w-0 w-full items-center md:w-auto md:flex-none">
+      <span class="min-w-0">
       Made with
       <span class="material-symbols-outlined text-[14px] text-sol-red mx-0.5">favorite</span>
       by <a href="https://ambersah.dev" target="_blank" rel="noopener" class="text-base00 underline underline-offset-4 hover:text-sol-red">AmberSah.dev</a>'s Codex Credits
+      </span>
+      <span class="ml-auto inline-flex items-center self-center md:ml-1.5">
+        <span class="mx-1.5 text-base1/80">·</span>
+        <a href="https://x.com/AmberSahdev" target="_blank" rel="noopener" class="relative -top-px inline-flex items-center justify-center rounded-full p-1 text-base00 transition hover:bg-base2 hover:text-sol-red" aria-label="AmberSahdev on X">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="h-3.5 w-3.5 fill-none stroke-current stroke-[1.7]">
+          <path d="M21 6.5a7.7 7.7 0 0 1-2.2.6 3.8 3.8 0 0 0 1.7-2.1 7.8 7.8 0 0 1-2.4.9 3.8 3.8 0 0 0-6.5 3.4 10.8 10.8 0 0 1-7.8-4 3.8 3.8 0 0 0 1.2 5 3.7 3.7 0 0 1-1.7-.5v.1a3.8 3.8 0 0 0 3 3.7 3.8 3.8 0 0 1-1.7.1 3.8 3.8 0 0 0 3.5 2.6A7.7 7.7 0 0 1 4 18.2a10.8 10.8 0 0 0 5.8 1.7c7 0 10.8-5.8 10.8-10.8v-.5A7.9 7.9 0 0 0 21 6.5Z" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        </a>
+      </span>
     </span>
   </footer>
   {% block scripts %}{% endblock %}

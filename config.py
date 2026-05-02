@@ -16,7 +16,7 @@ SCREENSHOT_EXT = {"PNG": "png", "JPEG": "jpg", "WEBP": "webp", "GIF": "gif"}
 # Hand-picked names for the top row of the home grid. Missing pets are skipped.
 FEATURED_PETS = ["ruckus"]
 
-GRID_TOTAL = 10
+GRID_TOTAL = 8
 GRID_FEATURED_SLOTS = 4
 
 IP_HASH_SALT = os.environ.get("CPS_IP_SALT", "dev-salt-change-me")
