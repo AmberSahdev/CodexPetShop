@@ -7,6 +7,9 @@
   const folderInput = document.getElementById('folder-input');
   const folderSummary = document.getElementById('folder-summary');
   const folderSummaryText = document.getElementById('folder-summary-text');
+  const folderPreview = document.getElementById('folder-preview');
+  const folderPreviewImage = document.getElementById('folder-preview-image');
+  const folderPreviewName = document.getElementById('folder-preview-name');
   const folderError = document.getElementById('folder-error');
 
   const submitBtn = document.getElementById('submit-btn');
@@ -18,6 +21,7 @@
 
   let petJsonFile = null;
   let spritesheetFile = null;
+  let previewUrl = null;
 
   const state = { nameOk: false, folderOk: false };
 
@@ -30,6 +34,24 @@
     setStepActive(1, state.nameOk);
     setStepActive(2, state.nameOk && state.folderOk);
     submitBtn.disabled = !(state.nameOk && state.folderOk);
+  }
+  function clearPreview() {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      previewUrl = null;
+    }
+    folderPreview.classList.add('hidden');
+    folderPreviewImage.removeAttribute('src');
+    folderPreviewName.textContent = '';
+  }
+  function showPreview(files) {
+    if (!spritesheetFile) return clearPreview();
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    previewUrl = URL.createObjectURL(spritesheetFile);
+    folderPreviewImage.src = previewUrl;
+    const petJsonEntry = files.find(f => nameOf(f) === 'pet.json');
+    folderPreviewName.textContent = petJsonEntry?.webkitRelativePath?.split('/')[0] || nameInput.value.trim().toLowerCase() || 'Selected pet';
+    folderPreview.classList.remove('hidden');
   }
 
   // ---------- Step 1: name availability ----------
@@ -82,7 +104,7 @@
     }
   }
   function nameOf(f) { return (f.webkitRelativePath || f.name).split('/').pop().toLowerCase(); }
-  function setFolderError(msg) { folderError.textContent = msg; folderSummary.classList.add('hidden'); state.folderOk = false; refresh(); }
+  function setFolderError(msg) { folderError.textContent = msg; folderSummary.classList.add('hidden'); clearPreview(); state.folderOk = false; refresh(); }
   function processFiles(files) {
     folderError.textContent = '';
     petJsonFile = null; spritesheetFile = null;
@@ -97,6 +119,7 @@
       return setFolderError(`spritesheet.webp is too large (${(spritesheetFile.size/1024/1024).toFixed(2)} MB; limit 2 MB).`);
     folderSummaryText.textContent = `Found pet.json + spritesheet.webp (${(spritesheetFile.size/1024).toFixed(0)} KB)`;
     folderSummary.classList.remove('hidden');
+    showPreview(files);
     state.folderOk = true; refresh();
   }
   folderInput.addEventListener('change', () => processFiles([...folderInput.files]));

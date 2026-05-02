@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 {% block title %}{{ pet.display_name }} · Codex Pet Shop{% endblock %}
 {% block content %}
-<section class="mx-auto max-w-4xl px-6 pt-8 pb-24">
-  <a href="/" class="btn-link text-sm">
+<section class="mx-auto max-w-4xl px-6 pt-8 pb-20">
+  <a href="/" class="inline-flex items-center gap-2 rounded-full bg-base2/70 px-3 py-1.5 text-sm text-base00 transition hover:bg-base2 hover:text-base02">
     <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-    all pets
+    Back
   </a>
 
   <div class="mt-6 grid md:grid-cols-2 gap-8 items-start">
-    <div class="aspect-square panel flex items-center justify-center overflow-hidden">
+    <div class="mx-auto aspect-square max-w-[18rem] md:mx-0 md:max-w-[19rem] panel flex items-center justify-center overflow-hidden">
       {% if pet.screenshot_filename %}
         <img src="/screenshots/{{ pet.id }}" alt="{{ pet.display_name }}"
-             class="h-full w-full object-cover" />
+             class="h-1/2 w-1/2 object-contain" />
       {% else %}
         <img src="/sprites/{{ pet.id }}.webp" alt="{{ pet.display_name }}"
-             class="max-h-full max-w-full p-12 [image-rendering:pixelated]" />
+             class="h-1/2 w-1/2 object-contain [image-rendering:pixelated]" />
       {% endif %}
     </div>
 
@@ -24,11 +24,11 @@
       <p class="mt-4 text-base01 leading-relaxed">{{ pet.description }}</p>
 
       <div class="mt-8 flex flex-wrap gap-3">
-        <a href="/{{ pet.id }}/bundle.zip" class="btn-ghost" download>
+        <a href="/{{ pet.id }}/bundle.zip" class="btn bg-sol-illini text-base3 hover:bg-sol-orange" download>
           <span class="material-symbols-outlined">download</span>
           Download bundle
         </a>
-        <button id="share-btn" class="btn-primary"
+        <button id="share-btn" class="btn-ghost"
                 data-share-title="{{ pet.display_name }} on Codex Pet Shop"
                 data-share-text="meet {{ pet.display_name }} →">
           <span class="material-symbols-outlined">ios_share</span>
