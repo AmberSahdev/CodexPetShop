@@ -1,62 +1,239 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="mx-auto flex max-w-5xl justify-center px-6 pt-12 pb-28 md:block">
-  <h1 id="hero-typing" class="w-full max-w-[22rem] text-left text-[2.5rem] leading-[1.08] text-base02 md:max-w-5xl md:text-[3.1rem]">
-    <span class="block">
-      <span data-text="I burned all my"></span>
-    </span>
-    <span class="mt-2 block" data-line-gap="tight">
-      <span data-text="Codex Credits"></span>
-    </span>
-    <span class="mt-2 block" data-line-gap="tight">
-      <span data-text="generating pets"></span>
-    </span>
-    <span class="mt-3 block text-base0 md:mt-4">
-      <span data-text="So you can just"></span>
-    </span>
-    <span class="mt-2 block text-base0" data-line-gap="tight">
-      <span data-text="adopt one"></span>
-    </span>
-    <span id="hero-cursor" class="hero-cursor" aria-hidden="true"></span>
-  </h1>
-</section>
+<style>
+  .home-top-shell {
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: 3rem 1rem 2.5rem;
+  }
 
-<section class="mx-auto max-w-xl px-6">
-  <div class="grid grid-cols-4 gap-x-3 gap-y-6 sm:gap-x-6 sm:gap-y-8">
+  .home-top-layout {
+    display: block;
+  }
+
+  .home-hero-column {
+    display: flex;
+    justify-content: center;
+  }
+
+  .home-hero {
+    width: 100%;
+    max-width: 22rem;
+    margin: 0;
+    text-align: left;
+    font-size: 2.5rem;
+    line-height: 1.12;
+    color: #073642;
+  }
+
+  .home-hero-line {
+    display: block;
+  }
+
+  .home-hero-line--tight {
+    margin-top: 0.5rem;
+  }
+
+  .home-hero-line--soft {
+    margin-top: 0.75rem;
+    color: #839496;
+  }
+
+  .home-grid-column {
+    width: 100%;
+    max-width: 36rem;
+    margin: 4rem auto 0;
+  }
+
+  .home-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem 0.75rem;
+  }
+
+  .home-grid-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .home-grid-card {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: #fdf6e3;
+    box-shadow: inset 0 0 0 1px rgba(147, 161, 161, 0.3);
+    transition: transform 150ms ease, box-shadow 150ms ease, color 150ms ease;
+  }
+
+  .home-grid-link:hover .home-grid-card {
+    transform: translateY(-2px);
+    box-shadow: inset 0 0 0 1px rgba(147, 161, 161, 0.6);
+  }
+
+  .home-grid-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transition: transform 150ms ease;
+  }
+
+  .home-grid-link:hover .home-grid-image {
+    transform: scale(1.04);
+  }
+
+  .home-grid-image--cover {
+    object-fit: cover;
+  }
+
+  .home-grid-sprite {
+    object-fit: contain;
+    padding: 1rem;
+    image-rendering: pixelated;
+  }
+
+  .home-grid-label {
+    padding-top: 0.75rem;
+    text-align: center;
+    font-size: 13px;
+    letter-spacing: 0.01em;
+    color: rgba(101, 123, 131, 0.85);
+  }
+
+  .home-grid-pending {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(147, 161, 161, 0.7);
+    user-select: none;
+  }
+
+  .home-grid-upload {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #657b83;
+  }
+
+  .home-grid-upload-icon {
+    font-size: 2.25rem;
+    color: #268bd2;
+    transition: color 150ms ease;
+  }
+
+  .home-grid-link:hover .home-grid-upload-icon {
+    color: #073642;
+  }
+
+  @media (min-width: 640px) {
+    .home-grid {
+      gap: 2rem 1.5rem;
+    }
+
+    .home-grid-sprite {
+      padding: 1rem;
+    }
+
+    .home-grid-upload-icon {
+      font-size: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .home-top-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 21rem) minmax(0, 33rem);
+      justify-content: space-between;
+      align-items: start;
+      column-gap: 2.5rem;
+    }
+
+    .home-hero-column {
+      justify-content: flex-start;
+    }
+
+    .home-hero {
+      max-width: 21rem;
+      font-size: 2.8rem;
+    }
+
+    .home-grid-column {
+      max-width: 30rem;
+      margin: 0 0 0 auto;
+    }
+
+    .home-grid {
+      gap: 1.75rem 1rem;
+    }
+
+    .home-grid-sprite {
+      padding: 1rem;
+    }
+  }
+</style>
+<section class="home-top-shell">
+  <div class="home-top-layout">
+    <div class="home-hero-column">
+      <h1 id="hero-typing" class="home-hero">
+        <span class="home-hero-line">
+        <span data-text="I burned all my"></span>
+        </span>
+        <span class="home-hero-line home-hero-line--tight" data-line-gap="tight">
+        <span data-text="Codex Credits"></span>
+        </span>
+        <span class="home-hero-line home-hero-line--tight" data-line-gap="tight">
+        <span data-text="generating pets"></span>
+        </span>
+        <span class="home-hero-line home-hero-line--soft">
+        <span data-text="So you could just"></span>
+        </span>
+        <span class="home-hero-line home-hero-line--tight home-hero-line--soft" data-line-gap="tight">
+        <span data-text="adopt one"></span>
+        </span>
+        <span id="hero-cursor" class="hero-cursor" aria-hidden="true"></span>
+      </h1>
+    </div>
+
+    <div class="home-grid-column">
+      <div class="home-grid">
     {% set visible_pets = pets[:7] %}
     {% for pet in visible_pets %}
-      <a href="/{{ pet.id }}" class="group block" title="{{ pet.display_name }}">
-        <div class="card">
+      <a href="/{{ pet.id }}" class="home-grid-link" title="{{ pet.display_name }}">
+        <div class="home-grid-card">
           {% if pet.screenshot_filename %}
             <img src="/screenshots/{{ pet.id }}" alt="{{ pet.display_name }}"
                  loading="lazy"
-                 class="absolute inset-0 h-full w-full object-cover transition group-hover:scale-[1.04]" />
+                 class="home-grid-image home-grid-image--cover" />
           {% else %}
             <img src="/sprites/{{ pet.id }}.webp" alt="{{ pet.display_name }}"
                  loading="lazy"
-                 class="absolute inset-0 h-full w-full object-contain p-3 [image-rendering:pixelated] transition group-hover:scale-[1.04] sm:p-6 lg:p-8" />
+                 class="home-grid-image home-grid-sprite" />
           {% endif %}
         </div>
-        <div class="pt-3 text-center">
-          <span class="text-[13px] tracking-[0.01em] text-base00/85">{{ pet.display_name }}</span>
+        <div class="home-grid-label">
+          <span>{{ pet.display_name }}</span>
         </div>
       </a>
     {% endfor %}
     {% for _ in range(7 - visible_pets|length) %}
       <div class="block">
-        <div class="card flex items-center justify-center text-base1/70 select-none">
+        <div class="home-grid-card home-grid-pending">
           <span class="material-symbols-outlined text-base1/30 text-[8px]">pending</span>
         </div>
       </div>
     {% endfor %}
-    <a href="/upload" class="group block">
-      <div class="card flex flex-col items-center justify-center gap-2 text-base00 transition group-hover:text-base02">
-        <span class="material-symbols-outlined text-3xl text-sol-blue sm:text-4xl">add_circle</span>
-      </div>
-      <div class="pt-3 text-center">
-        <span class="text-[13px] tracking-[0.01em] text-base00/85">Upload Yours</span>
-      </div>
-    </a>
+      <a href="/upload" class="home-grid-link">
+        <div class="home-grid-card home-grid-upload">
+          <span class="material-symbols-outlined home-grid-upload-icon">add_circle</span>
+        </div>
+        <div class="home-grid-label">
+          <span>Upload Yours</span>
+        </div>
+      </a>
+    </div>
+    </div>
   </div>
 </section>
 
