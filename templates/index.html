@@ -343,15 +343,13 @@
       <div class="mt-3">
         <div class="max-w-md overflow-hidden rounded-2xl ring-1 ring-base1/25 bg-base2/30">
           <div class="aspect-video">
-            <iframe
-              title="Codex pet demo"
-              src="https://player.vimeo.com/video/1188705047?h=6ed581a5cf&autoplay=1&muted=1"
-              class="h-full w-full"
-              frameborder="0"
-              referrerpolicy="strict-origin-when-cross-origin"
-              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-              allowfullscreen
-            ></iframe>
+            <img
+              src="{{ url_for('static', filename='codex-pet-demo.webp') }}"
+              alt="Codex pet demo"
+              loading="lazy"
+              decoding="async"
+              class="h-full w-full object-cover"
+            />
           </div>
         </div>
         <p class="mt-3 max-w-md text-sm leading-relaxed text-base00 md:max-w-xl">
