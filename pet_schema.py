@@ -1,5 +1,7 @@
 from jsonschema import Draft202012Validator
 
+DESCRIPTION_MAX = 280
+
 PET_JSON_SCHEMA = {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
@@ -8,7 +10,8 @@ PET_JSON_SCHEMA = {
     "properties": {
         "id": {"type": "string", "pattern": r"^[a-z0-9-]{2,24}$"},
         "displayName": {"type": "string", "minLength": 1, "maxLength": 40},
-        "description": {"type": "string", "maxLength": 280},
+        # No maxLength — over-long descriptions are truncated in clip_description().
+        "description": {"type": "string"},
         "spritesheetPath": {
             "type": "string",
             "minLength": 1,
@@ -28,3 +31,12 @@ def validate_pet_json(data) -> list[str]:
         path = ".".join(str(p) for p in err.path) or "(root)"
         errors.append(f"{path}: {err.message}")
     return errors
+
+
+def clip_description(text: str) -> str:
+    """Silently truncate to DESCRIPTION_MAX with an ellipsis if needed."""
+    if not isinstance(text, str):
+        return ""
+    if len(text) <= DESCRIPTION_MAX:
+        return text
+    return text[: DESCRIPTION_MAX - 1].rstrip() + "…"

@@ -4,7 +4,21 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}Codex Pet Shop{% endblock %}</title>
-  <meta name="description" content="A community library of desktop pets for Codex." />
+  <meta name="description" content="{% block og_description %}A community library of desktop pets for Codex.{% endblock %}" />
+
+  {# Open Graph / Twitter share preview #}
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Codex Pet Shop" />
+  <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}" />
+  <meta property="og:description" content="{{ self.og_description() }}" />
+  <meta property="og:url" content="{{ request.url }}" />
+  <meta property="og:image" content="{{ url_for('static', filename='preview.png', _external=True) }}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{ self.og_title() }}" />
+  <meta name="twitter:description" content="{{ self.og_description() }}" />
+  <meta name="twitter:image" content="{{ url_for('static', filename='preview.png', _external=True) }}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet" />
@@ -55,6 +69,9 @@
       a { color: inherit; }
       ::selection { background: theme('colors.base2'); }
       .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; font-size: 1em; vertical-align: -3px; }
+      .icon { display: inline-block; width: 1em; height: 1em; vertical-align: -0.15em; flex-shrink: 0; }
+      .icon-mask { display: inline-block; width: 1em; height: 1em; vertical-align: -0.15em; flex-shrink: 0; background-color: currentColor; -webkit-mask-position: center; mask-position: center; -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+      .icon-check { -webkit-mask-image: url('/static/icons/check.svg'); mask-image: url('/static/icons/check.svg'); }
     }
     @layer components {
       .btn       { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition active:scale-[.99]; }
@@ -74,7 +91,7 @@
   <header class="sticky top-8 z-50 mx-auto max-w-5xl px-4 mt-6">
     <div class="group/header flex items-center justify-between rounded-2xl bg-white/65 backdrop-blur-lg backdrop-saturate-150 ring-1 ring-white/80 shadow-[0_1px_0_rgba(255,255,255,0.7)_inset,0_18px_40px_-16px_rgba(7,54,66,0.22)] px-5 py-3 transition duration-200 ease-out hover:bg-white/75 hover:-translate-y-[1px] hover:shadow-[0_1px_0_rgba(255,255,255,0.8)_inset,0_22px_44px_-14px_rgba(7,54,66,0.28)]">
       <a href="/" class="flex items-center gap-2 text-base02">
-        <span class="material-symbols-outlined text-sol-illini text-3xl">pets</span>
+        {{ icon('pets', 'icon text-sol-illini text-3xl') }}
         <span class="font-semibold tracking-tight text-xl">Codex Pet Shop</span>
       </a>
       <nav class="flex items-center gap-6 text-sm text-base00">
@@ -94,7 +111,7 @@
   <footer class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 pt-4 pb-8 text-xs text-base1">
     <span class="min-w-0">
       Made with
-      <span class="material-symbols-outlined text-[14px] text-sol-red mx-0.5">favorite</span>
+      {{ icon('favorite', 'icon text-[14px] text-sol-red mx-0.5') }}
       by <a href="https://ambersah.dev" target="_blank" rel="noopener" class="text-base00 underline underline-offset-4 hover:text-sol-red">AmberSah.dev</a>'s Codex Credits
     </span>
     <span class="inline-flex items-center self-center">

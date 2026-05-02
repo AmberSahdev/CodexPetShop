@@ -101,9 +101,10 @@ def count_visible() -> int:
 
 
 def grid_pets(featured_ids: list[str], total: int, featured_slots: int) -> list[dict]:
-    """Pull every visible pet, then sample in Python.
-    Fine up to a few hundred pets; cheap (1 Firestore query per pageload).
-    No composite index needed."""
+    """Pull every visible pet, then order in Python.
+    Featured row first (in config order), then the rest by upload time
+    (oldest first). Fine up to a few hundred pets; cheap (1 Firestore
+    query per pageload). No composite index needed."""
     all_pets = list_visible()
     by_id = {p["id"]: p for p in all_pets}
 
@@ -111,7 +112,7 @@ def grid_pets(featured_ids: list[str], total: int, featured_slots: int) -> list[
     feat_ids = {p["id"] for p in featured}
 
     rest = [p for p in all_pets if p["id"] not in feat_ids]
-    random.shuffle(rest)
+    rest.sort(key=lambda p: p.get("created_at", 0))
     rest = rest[: total - len(featured)]
     return featured + rest
 

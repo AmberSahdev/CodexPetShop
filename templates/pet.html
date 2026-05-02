@@ -3,7 +3,7 @@
 {% block content %}
 <section class="mx-auto max-w-4xl px-6 pt-8 pb-20">
   <a href="/" class="inline-flex items-center gap-2 rounded-full bg-base2/70 px-3 py-1.5 text-sm text-base00 transition hover:bg-base2 hover:text-base02">
-    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+    {{ icon('arrow_back', 'icon text-[18px]') }}
     Back
   </a>
 
@@ -37,7 +37,7 @@
       </div>
 
       <p id="share-toast" class="mt-3 text-sm text-sol-green opacity-0 transition">
-        <span class="material-symbols-outlined text-[16px]">check</span> Link copied
+        {{ icon('check', 'icon text-[16px]') }} Link copied
       </p>
 
       <div class="hairline mt-10 pt-4 text-xs text-base1 flex items-center gap-2">

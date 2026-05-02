@@ -15,7 +15,7 @@ from pathlib import Path
 
 import config
 import store
-from pet_schema import validate_pet_json
+from pet_schema import validate_pet_json, clip_description
 
 INCOMING = config.DATA_DIR / "incoming"
 
@@ -62,7 +62,7 @@ def ingest_one(pet_dir: Path) -> bool:
     store.create(
         pet_id=pet_id,
         display_name=manifest["displayName"],
-        description=manifest["description"],
+        description=clip_description(manifest["description"]),
         spritesheet_bytes=sprite_bytes,
         ip_hash="ingest",
         screenshot_bytes=screenshot_bytes,

@@ -3,7 +3,7 @@
 {% block content %}
 <section class="mx-auto max-w-2xl px-6 pt-8 pb-20">
   <a href="/" class="inline-flex items-center gap-2 rounded-full bg-base2/70 px-3 py-1.5 text-sm text-base00 transition hover:bg-base2 hover:text-base02">
-    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+    {{ icon('arrow_back', 'icon text-[18px]') }}
     Back
   </a>
   <h1 class="text-4xl md:text-5xl font-semibold tracking-tight mt-4">Post Your Pet</h1>
@@ -34,7 +34,7 @@
       <div class="ml-7 mt-3">
         <label id="folder-drop"
                class="flex flex-col items-center justify-center gap-2 py-10 rounded-2xl ring-1 ring-dashed ring-base1/60 bg-base2/40 hover:bg-base2 transition cursor-pointer text-center">
-          <span class="material-symbols-outlined text-base1 text-3xl">folder_open</span>
+          {{ icon('folder_open', 'icon text-base1 text-3xl') }}
           <span class="text-sm text-base01">Drag a folder here, or click to choose</span>
           <span class="text-xs text-base1">e.g. <code>~/.codex/pets/ruckus</code></span>
           <input id="folder-input" type="file" webkitdirectory directory multiple class="hidden" />
@@ -58,7 +58,7 @@
 
     <div class="step opacity-40 pointer-events-none ml-7" data-step="3">
       <button id="submit-btn" type="submit" class="btn-primary" disabled>
-        <span class="material-symbols-outlined">check</span>
+        {{ icon('check', 'icon') }}
         Submit
       </button>
       <p id="submit-error" class="mt-3 text-sm text-sol-red"></p>

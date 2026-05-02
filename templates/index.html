@@ -249,7 +249,7 @@
     <details class="group p-5">
       <summary class="flex items-center justify-between cursor-pointer list-none gap-4">
         <span class="font-medium text-base02">How do I install a pet?</span>
-        <span class="material-symbols-outlined text-base1 transition group-open:rotate-90">chevron_right</span>
+        {{ icon('chevron_right', 'icon text-base1 transition group-open:rotate-90') }}
       </summary>
       <div class="mt-4 text-sm text-base00">
         <ul class="space-y-2 pl-5 list-disc marker:text-base1">
@@ -263,7 +263,7 @@
     <details class="group p-5">
       <summary class="flex items-center justify-between cursor-pointer list-none gap-4">
         <span class="font-medium text-base02">How do I generate my own pet?</span>
-        <span class="material-symbols-outlined text-base1 transition group-open:rotate-90">chevron_right</span>
+        {{ icon('chevron_right', 'icon text-base1 transition group-open:rotate-90') }}
       </summary>
       <div class="mt-4 text-sm text-base00">
         <ul class="space-y-2 pl-5 list-disc marker:text-base1">
@@ -384,7 +384,7 @@
       const original = button.innerHTML;
       try {
         await navigator.clipboard.writeText(button.dataset.copyText || '');
-        button.innerHTML = '<span class="material-symbols-outlined text-[14px]">check</span><span>Copied</span>';
+        button.innerHTML = `{{ icon('check', 'icon text-[14px]') | safe | replace("\n", "") }}<span>Copied</span>`;
         setTimeout(() => {
           button.innerHTML = original;
         }, 1200);

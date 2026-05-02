@@ -14,7 +14,7 @@ from PIL import Image, UnidentifiedImageError
 
 import config
 import store
-from pet_schema import validate_pet_json
+from pet_schema import validate_pet_json, clip_description
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = (
@@ -42,7 +42,24 @@ def make_thumbnail(spritesheet_bytes: bytes) -> bytes:
 @app.context_processor
 def inject_globals():
     import datetime
-    return {"now_year": datetime.datetime.utcnow().year}
+    return {"now_year": datetime.datetime.utcnow().year, "icon": _icon}
+
+
+_ICONS_DIR = config.BASE_DIR / "static" / "icons"
+_icon_cache: dict[str, str] = {}
+
+
+def _icon(name: str, cls: str = "") -> "Markup":
+    """Inline an SVG from static/icons/<name>.svg, injecting Tailwind classes
+    onto the root <svg> tag. Returns Markup so Jinja doesn't escape it."""
+    from markupsafe import Markup
+    if name not in _icon_cache:
+        path = _ICONS_DIR / f"{name}.svg"
+        _icon_cache[name] = path.read_text() if path.exists() else ""
+    svg = _icon_cache[name]
+    if cls and svg:
+        svg = svg.replace("<svg ", f'<svg class="{cls}" ', 1)
+    return Markup(svg)
 
 
 def _ip_hash(req) -> str:
@@ -143,7 +160,7 @@ def upload_submit():
         store.create(
             pet_id=name,
             display_name=manifest["displayName"],
-            description=manifest["description"],
+            description=clip_description(manifest["description"]),
             spritesheet_bytes=sprite_bytes,
             ip_hash=_ip_hash(request),
             screenshot_bytes=screenshot_bytes,

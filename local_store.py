@@ -109,7 +109,8 @@ def spritesheet_bytes(pet_id: str) -> Optional[bytes]:
 
 
 def grid_pets(featured_ids: list[str], total: int, featured_slots: int) -> list[dict]:
-    """Return up to `total` pets: featured row first (in order), then random."""
+    """Return up to `total` pets: featured row first (in config order),
+    then the rest in upload order (oldest first)."""
     all_pets = list_visible()
     by_id = {p["id"]: p for p in all_pets}
 
@@ -117,6 +118,6 @@ def grid_pets(featured_ids: list[str], total: int, featured_slots: int) -> list[
     featured_set = {p["id"] for p in featured}
 
     rest = [p for p in all_pets if p["id"] not in featured_set]
-    random.shuffle(rest)
+    rest.sort(key=lambda p: p.get("created_at", 0))
     rest = rest[: total - len(featured)]
     return featured + rest

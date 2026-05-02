@@ -184,6 +184,6 @@
       submitError.textContent = `Network error: ${err.message}`;
     }
     submitBtn.disabled = false;
-    submitBtn.innerHTML = '<span class="material-symbols-outlined">check</span> Post pet';
+    submitBtn.innerHTML = '<span class="icon-mask icon-check"></span> Post pet';
   });
 })();
