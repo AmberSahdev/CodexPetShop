@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% block title %}Not found · Codex Pet Shop{% endblock %}
+{% block meta_description %}This Codex Pet Shop page could not be found.{% endblock %}
+{% block og_title %}Not found · Codex Pet Shop{% endblock %}
+{% block og_image %}{{ absolute_url(url_for('static', filename='preview.png')) }}{% endblock %}
+{% block og_image_alt %}Codex Pet Shop preview{% endblock %}
 {% block content %}
 <section class="mx-auto max-w-xl px-6 py-32 text-center">
   {{ icon('pets', 'icon text-sol-illini text-5xl') }}

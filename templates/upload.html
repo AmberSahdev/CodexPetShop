@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% block title %}Post Your Pet · Codex Pet Shop{% endblock %}
+{% block meta_description %}Upload your own Codex pet to Codex Pet Shop.{% endblock %}
+{% block og_title %}Post Your Pet · Codex Pet Shop{% endblock %}
+{% block og_image %}{{ absolute_url(url_for('static', filename='preview.png')) }}{% endblock %}
+{% block og_image_alt %}Codex Pet Shop upload page preview{% endblock %}
 {% block content %}
 <section class="mx-auto max-w-2xl px-6 pt-8 pb-20">
   <a href="/" class="inline-flex items-center gap-2 rounded-full bg-base2/70 px-3 py-1.5 text-sm text-base00 transition hover:bg-base2 hover:text-base02">

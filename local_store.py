@@ -108,6 +108,11 @@ def spritesheet_bytes(pet_id: str) -> Optional[bytes]:
     return p.read_bytes() if p.exists() else None
 
 
+def screenshot_bytes(pet: dict) -> Optional[bytes]:
+    path = get_screenshot_path(pet)
+    return path.read_bytes() if path and path.exists() else None
+
+
 def grid_pets(featured_ids: list[str], total: int, featured_slots: int) -> list[dict]:
     """Return up to `total` pets: featured row first (in config order),
     then the rest in upload order (oldest first)."""

@@ -5,6 +5,7 @@ import os
 import re
 import zipfile
 from pathlib import Path
+from urllib.parse import urljoin
 
 from flask import (
     Flask, abort, jsonify, redirect, render_template,
@@ -42,7 +43,12 @@ def make_thumbnail(spritesheet_bytes: bytes) -> bytes:
 @app.context_processor
 def inject_globals():
     import datetime
-    return {"now_year": datetime.datetime.utcnow().year, "icon": _icon}
+    return {
+        "now_year": datetime.datetime.utcnow().year,
+        "icon": _icon,
+        "absolute_url": _absolute_url,
+        "canonical_request_url": _canonical_request_url,
+    }
 
 
 _ICONS_DIR = config.BASE_DIR / "static" / "icons"
@@ -60,6 +66,34 @@ def _icon(name: str, cls: str = "") -> "Markup":
     if cls and svg:
         svg = svg.replace("<svg ", f'<svg class="{cls}" ', 1)
     return Markup(svg)
+
+
+def _absolute_url(url: str) -> str:
+    if not url:
+        return ""
+    if url.startswith(("http://", "https://")):
+        if request:
+            return url.replace(request.host_url.rstrip("/"), _preferred_root().rstrip("/"), 1)
+        return url
+    return urljoin(_preferred_root(), url.lstrip("/"))
+
+
+def _preferred_root() -> str:
+    canonical_host = os.environ.get("CPS_CANONICAL_HOST", "www.codexpetshop.com")
+    scheme = request.headers.get("X-Forwarded-Proto", request.scheme if request else "https")
+    return f"{scheme}://{canonical_host}/"
+
+
+def _canonical_request_url() -> str:
+    return urljoin(_preferred_root(), request.full_path.lstrip("/")).rstrip("?")
+
+
+@app.before_request
+def redirect_to_canonical_host():
+    canonical_host = os.environ.get("CPS_CANONICAL_HOST", "www.codexpetshop.com")
+    bare_host = canonical_host.removeprefix("www.")
+    if request.host == bare_host:
+        return redirect(_canonical_request_url(), code=301)
 
 
 def _ip_hash(req) -> str:
@@ -80,8 +114,12 @@ def relative_time(ts: float) -> str:
 def _decorate(pet: dict) -> dict:
     """Attach spritesheet_url + screenshot_url so templates don't care about backend."""
     pet = dict(pet)
-    pet["spritesheet_url"] = store.spritesheet_url(pet)
-    pet["screenshot_url"] = store.screenshot_url(pet)
+    pet["spritesheet_url"] = url_for("sprite_file", pet_id=pet["id"])
+    pet["screenshot_url"] = (
+        url_for("screenshot_file", pet_id=pet["id"])
+        if pet.get("screenshot_filename")
+        else None
+    )
     return pet
 
 
@@ -179,30 +217,31 @@ def healthz():
     return "ok", 200
 
 
-if os.environ.get("CPS_BACKEND", "local").lower() != "gcp":
-    # Local dev: serve spritesheets/screenshots straight from disk.
-    @app.route("/sprites/<pet_id>.webp")
-    def sprite_file(pet_id: str):
-        if not ID_RE.match(pet_id):
-            abort(404)
-        path = store.get_spritesheet_path(pet_id)
-        if not path.exists() or not store.exists(pet_id):
-            abort(404)
-        return send_file(path, mimetype="image/webp", max_age=31536000)
+@app.route("/sprites/<pet_id>.webp")
+def sprite_file(pet_id: str):
+    if not ID_RE.match(pet_id):
+        abort(404)
+    if not store.exists(pet_id):
+        abort(404)
+    data = store.spritesheet_bytes(pet_id)
+    if not data:
+        abort(404)
+    return send_file(io.BytesIO(data), mimetype="image/webp", max_age=31536000)
 
-    @app.route("/screenshots/<pet_id>")
-    def screenshot_file(pet_id: str):
-        if not ID_RE.match(pet_id):
-            abort(404)
-        pet = store.get(pet_id)
-        if not pet:
-            abort(404)
-        path = store.get_screenshot_path(pet)
-        if not path:
-            abort(404)
-        mime = {"png": "image/png", "jpg": "image/jpeg", "webp": "image/webp", "gif": "image/gif"}
-        ext = path.suffix.lstrip(".")
-        return send_file(path, mimetype=mime.get(ext, "application/octet-stream"), max_age=31536000)
+
+@app.route("/screenshots/<pet_id>")
+def screenshot_file(pet_id: str):
+    if not ID_RE.match(pet_id):
+        abort(404)
+    pet = store.get(pet_id)
+    if not pet:
+        abort(404)
+    data = store.screenshot_bytes(pet)
+    if not data:
+        abort(404)
+    ext = (pet.get("screenshot_filename") or "").rsplit(".", 1)[-1].lower()
+    mime = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg", "webp": "image/webp", "gif": "image/gif"}
+    return send_file(io.BytesIO(data), mimetype=mime.get(ext, "application/octet-stream"), max_age=31536000)
 
 
 @app.route("/p/<pet_id>/bundle.zip")

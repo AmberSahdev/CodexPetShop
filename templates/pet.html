@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% block title %}{{ pet.display_name }} · Codex Pet Shop{% endblock %}
+{% block meta_description %}{{ pet.description }}{% endblock %}
+{% block og_title %}{{ pet.display_name }} · Codex Pet Shop{% endblock %}
+{% block og_image %}{{ absolute_url(pet.screenshot_url or url_for('static', filename='preview.png')) }}{% endblock %}
+{% block og_image_alt %}Preview of {{ pet.display_name }}{% endblock %}
 {% block content %}
 <section class="mx-auto max-w-4xl px-6 pt-8 pb-20">
   <a href="/" class="inline-flex items-center gap-2 rounded-full bg-base2/70 px-3 py-1.5 text-sm text-base00 transition hover:bg-base2 hover:text-base02">
@@ -25,13 +29,13 @@
 
       <div class="mt-8 flex flex-wrap gap-3">
         <a href="/p/{{ pet.id }}/bundle.zip" class="btn bg-sol-illini text-base3 hover:bg-sol-orange" download>
-          <span class="material-symbols-outlined">download</span>
+          {{ icon('download', 'icon') }}
           Download bundle
         </a>
         <button id="share-btn" class="btn-ghost"
                 data-share-title="{{ pet.display_name }} on Codex Pet Shop"
                 data-share-text="meet {{ pet.display_name }} →">
-          <span class="material-symbols-outlined">ios_share</span>
+          {{ icon('ios_share', 'icon') }}
           Share
         </button>
       </div>

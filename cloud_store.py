@@ -131,3 +131,13 @@ def spritesheet_bytes(pet_id: str) -> Optional[bytes]:
     if not blob.exists():
         return None
     return blob.download_as_bytes()
+
+
+def screenshot_bytes(pet: dict) -> Optional[bytes]:
+    fn = pet.get("screenshot_filename")
+    if not fn:
+        return None
+    blob = _bucket.blob(f"{SHOT_PREFIX}{fn}")
+    if not blob.exists():
+        return None
+    return blob.download_as_bytes()
