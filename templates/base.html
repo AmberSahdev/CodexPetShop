@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Codex Pet Shop{% endblock %}</title>
+  <meta name="description" content="A community library of desktop pets for Codex." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..900,30..100,0..1;1,9..144,400..900,30..100,0..1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,500,0,0" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <script>
+    // Solarized Light palette.
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            base3:  "#fdf6e3", // page background
+            base2:  "#eee8d5", // panels / soft fills
+            base1:  "#93a1a1", // muted / hairline
+            base0:  "#839496",
+            base00: "#657b83",
+            base01: "#586e75", // body text
+            base02: "#073642", // headings
+            base03: "#002b36",
+            sol: {
+              yellow:  "#b58900",
+              orange:  "#cb4b16",
+              red:     "#dc322f",
+              magenta: "#d33682",
+              violet:  "#6c71c4",
+              blue:    "#268bd2",
+              cyan:    "#2aa198",
+              green:   "#859900",
+            },
+          },
+          fontFamily: {
+            sans: ['Fraunces', 'ui-serif', 'Georgia', 'serif'],
+          },
+          borderRadius: {
+            xl2: "1rem",
+          },
+          boxShadow: {
+            sticker: "0 1px 0 rgba(7,54,66,0.06), 0 12px 24px -16px rgba(7,54,66,0.18)",
+            stickerHover: "0 1px 0 rgba(7,54,66,0.06), 0 24px 36px -18px rgba(7,54,66,0.25)",
+          },
+        },
+      },
+    };
+  </script>
+  <style type="text/tailwindcss">
+    @layer base {
+      html, body { background-color: theme('colors.base3'); color: theme('colors.base01'); font-feature-settings: "ss01","ss02","cv11"; font-variation-settings: "opsz" 14, "SOFT" 50; }
+      h1, h2, h3 { color: theme('colors.base02'); letter-spacing: -0.025em; font-variation-settings: "opsz" 144, "SOFT" 50; }
+      .display { font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1; }
+      a { color: inherit; }
+      ::selection { background: theme('colors.base2'); }
+      .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 20; vertical-align: -4px; }
+    }
+    @layer components {
+      .btn       { @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-base font-medium transition active:scale-[.98]; }
+      .btn-primary { @apply btn bg-base02 text-base3 hover:bg-base01 shadow-sticker; }
+      .btn-ghost   { @apply btn ring-1 ring-base02/15 text-base01 hover:bg-base2 bg-base3; }
+      .btn-link    { @apply inline-flex items-center gap-1 text-sol-blue hover:underline underline-offset-4 font-medium; }
+      .panel     { @apply rounded-3xl bg-base3 ring-1 ring-base02/10 shadow-sticker; }
+      .card      { @apply relative aspect-square rounded-3xl bg-base3 ring-1 ring-base02/10 shadow-sticker transition hover:shadow-stickerHover hover:-translate-y-1 overflow-hidden; }
+      .field     { @apply w-full rounded-2xl border-base02/15 bg-base3 text-base01 placeholder:text-base1 focus:border-base02 focus:ring-base02 px-4 py-3; }
+      .hairline  { @apply border-t border-base02/10; }
+      .chip      { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 ring-base02/10 bg-base3 text-base00 shadow-sticker; }
+      .section-soft { @apply bg-base2/50; }
+      .logo-sticker { @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-base02 text-base3 ring-1 ring-base02 shadow-sticker; }
+    }
+  </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+  <header class="mx-auto max-w-6xl px-6 pt-6 pb-2 flex items-center justify-between">
+    <a href="/" class="logo-sticker">
+      <span class="material-symbols-outlined text-sol-yellow">pets</span>
+      <span class="font-bold tracking-tight">codex pet shop</span>
+    </a>
+    <nav class="flex items-center gap-2 text-sm">
+      <a href="/upload" class="btn-ghost text-sm py-2 px-4">
+        <span class="material-symbols-outlined">add</span>
+        Post a pet
+      </a>
+    </nav>
+  </header>
+  <main>{% block content %}{% endblock %}</main>
+  <div class="mx-auto max-w-5xl px-6 mt-12">
+    <div class="hairline"></div>
+  </div>
+  <footer class="mx-auto max-w-5xl px-6 py-8 text-xs text-base1 flex items-center justify-between">
+    <span>made for codex pets · {{ now_year }}</span>
+    <span class="flex items-center gap-1">
+      Made with
+      <span class="material-symbols-outlined text-[14px] text-sol-red">favorite</span>
+      by
+      <a href="https://ambersah.dev" target="_blank" rel="noopener" class="text-base00 hover:text-base02 underline-offset-4 hover:underline">AmberSah.dev</a>
+    </span>
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
