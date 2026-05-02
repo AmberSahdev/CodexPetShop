@@ -19,6 +19,7 @@
   .home-hero {
     width: 100%;
     max-width: 22rem;
+    min-height: 7.4em;
     margin: 0;
     text-align: left;
     font-size: 2.5rem;
@@ -156,6 +157,7 @@
 
     .home-hero {
       max-width: 21rem;
+      min-height: 7.2em;
       font-size: 2.8rem;
     }
 
@@ -200,7 +202,7 @@
       <div class="home-grid">
     {% set visible_pets = pets[:7] %}
     {% for pet in visible_pets %}
-      <a href="/{{ pet.id }}" class="home-grid-link" title="{{ pet.display_name }}">
+      <a href="/p/{{ pet.id }}" class="home-grid-link" title="{{ pet.display_name }}">
         <div class="home-grid-card">
           {% if pet.screenshot_filename %}
             <img src="/screenshots/{{ pet.id }}" alt="{{ pet.display_name }}"
@@ -246,6 +248,20 @@
   <div class="panel divide-y divide-base1/30">
     <details class="group p-5">
       <summary class="flex items-center justify-between cursor-pointer list-none gap-4">
+        <span class="font-medium text-base02">How do I install a pet?</span>
+        <span class="material-symbols-outlined text-base1 transition group-open:rotate-90">chevron_right</span>
+      </summary>
+      <div class="mt-4 text-sm text-base00">
+        <ul class="space-y-2 pl-5 list-disc marker:text-base1">
+          <li>Download the zip file from a pet&apos;s page</li>
+          <li>Unzip the file</li>
+          <li>Copy the folder into <code class="text-base02 not-italic">~/.codex/pets/</code></li>
+          <li>Go to <code class="text-base02 not-italic">Settings -&gt; Appearence -&gt; Pets</code> to set it</li>
+        </ul>
+      </div>
+    </details>
+    <details class="group p-5">
+      <summary class="flex items-center justify-between cursor-pointer list-none gap-4">
         <span class="font-medium text-base02">How do I generate my own pet?</span>
         <span class="material-symbols-outlined text-base1 transition group-open:rotate-90">chevron_right</span>
       </summary>
@@ -272,20 +288,6 @@
               </button>
             </div>
           </li>
-        </ul>
-      </div>
-    </details>
-    <details class="group p-5">
-      <summary class="flex items-center justify-between cursor-pointer list-none gap-4">
-        <span class="font-medium text-base02">How do I install a pet?</span>
-        <span class="material-symbols-outlined text-base1 transition group-open:rotate-90">chevron_right</span>
-      </summary>
-      <div class="mt-4 text-sm text-base00">
-        <ul class="space-y-2 pl-5 list-disc marker:text-base1">
-          <li>Download the zip file from a pet&apos;s page</li>
-          <li>Unzip the file</li>
-          <li>Copy the folder into <code class="text-base02 not-italic">~/.codex/pets/</code></li>
-          <li>Go to <code class="text-base02 not-italic">Settings -&gt; Appearence -&gt; Pets</code> to set it</li>
         </ul>
       </div>
     </details>

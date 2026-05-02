@@ -172,7 +172,7 @@ def screenshot_file(pet_id: str):
     return send_file(path, mimetype=mime.get(ext, "application/octet-stream"), max_age=31536000)
 
 
-@app.route("/<pet_id>/bundle.zip")
+@app.route("/p/<pet_id>/bundle.zip")
 def pet_bundle(pet_id: str):
     pet_id = pet_id.lower()
     pet = store.get(pet_id)
@@ -196,8 +196,8 @@ def pet_bundle(pet_id: str):
                      download_name=f"{pet_id}.zip")
 
 
-# Keep the catch-all `/<id>` last so it doesn't shadow other routes.
-@app.route("/<pet_id>")
+# Keep the pet page route near the end so it doesn't shadow other routes.
+@app.route("/p/<pet_id>")
 def pet_page(pet_id: str):
     pet_id = pet_id.lower()
     if not ID_RE.match(pet_id):
