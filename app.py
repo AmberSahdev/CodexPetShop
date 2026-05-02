@@ -21,6 +21,21 @@ app.config["MAX_CONTENT_LENGTH"] = (
 )
 
 ID_RE = re.compile(r"^[a-z0-9-]{2,24}$")
+THUMB_SIZE = 200
+
+
+def make_thumbnail(spritesheet_bytes: bytes) -> bytes:
+    """Crop top-left THUMB_SIZE x THUMB_SIZE from the spritesheet.
+    If smaller, crop what's there and upscale with NEAREST (preserves pixel art)."""
+    with Image.open(io.BytesIO(spritesheet_bytes)) as im:
+        im = im.convert("RGBA")
+        w, h = im.size
+        crop = im.crop((0, 0, min(THUMB_SIZE, w), min(THUMB_SIZE, h)))
+        if crop.size != (THUMB_SIZE, THUMB_SIZE):
+            crop = crop.resize((THUMB_SIZE, THUMB_SIZE), Image.NEAREST)
+        out = io.BytesIO()
+        crop.save(out, format="PNG", optimize=True)
+        return out.getvalue()
 
 
 @app.context_processor
@@ -69,7 +84,6 @@ def upload_submit():
     name = (request.form.get("name") or "").lower().strip()
     pet_json_file = request.files.get("pet_json")
     sprite_file = request.files.get("spritesheet")
-    screenshot_file = request.files.get("screenshot")
 
     if not name or not ID_RE.match(name):
         return jsonify(error="Invalid name. Use 2–24 chars: a–z, 0–9, hyphen."), 400
@@ -77,8 +91,6 @@ def upload_submit():
         return jsonify(error="Missing pet.json (drop your pet folder)."), 400
     if not sprite_file:
         return jsonify(error="Missing spritesheet.webp (drop your pet folder)."), 400
-    if not screenshot_file:
-        return jsonify(error="Please add a screenshot."), 400
 
     try:
         manifest = json.loads(pet_json_file.read().decode("utf-8"))
@@ -106,21 +118,11 @@ def upload_submit():
     except Exception as e:
         return jsonify(error=f"Spritesheet is not a valid image ({e})."), 400
 
-    screenshot_bytes = screenshot_file.read()
-    if len(screenshot_bytes) > config.MAX_SCREENSHOT_BYTES:
-        return jsonify(error="Screenshot exceeds 4 MB."), 413
-    if len(screenshot_bytes) == 0:
-        return jsonify(error="Screenshot is empty."), 400
     try:
-        with Image.open(io.BytesIO(screenshot_bytes)) as im:
-            im.verify()
-        with Image.open(io.BytesIO(screenshot_bytes)) as im:
-            fmt = im.format
-            if fmt not in config.ALLOWED_SCREENSHOT_FORMATS:
-                return jsonify(error=f"Screenshot must be PNG/JPG/WebP/GIF (got {fmt})."), 400
-            screenshot_ext = config.SCREENSHOT_EXT[fmt]
+        screenshot_bytes = make_thumbnail(sprite_bytes)
+        screenshot_ext = "png"
     except Exception as e:
-        return jsonify(error=f"Screenshot is not a valid image ({e})."), 400
+        return jsonify(error=f"Couldn't generate thumbnail ({e})."), 400
 
     try:
         store.create(

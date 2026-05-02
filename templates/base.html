@@ -7,8 +7,9 @@
   <meta name="description" content="A community library of desktop pets for Codex." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..900,30..100,0..1;1,9..144,400..900,30..100,0..1&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,500,0,0" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'%3E%3Cpath fill='%23ff5f05' d='M180-475q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29Zm180-160q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29Zm240 0q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29Zm180 160q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM266-75q-45 0-75.5-34.5T160-191q0-52 35.5-91t70.5-77q29-31 50-67.5t50-68.5q22-26 51-43t63-17q34 0 63 16t51 42q28 32 49.5 69t50.5 69q35 38 70.5 77t35.5 91q0 47-30.5 81.5T694-75q-54 0-107-9t-107-9q-54 0-107 9t-107 9Z'/%3E%3C/svg%3E" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
   <script>
     // Solarized Light palette.
@@ -26,6 +27,7 @@
             base03: "#002b36",
             sol: {
               yellow:  "#b58900",
+              illini:  "#ff5f05",
               orange:  "#cb4b16",
               red:     "#dc322f",
               magenta: "#d33682",
@@ -36,14 +38,10 @@
             },
           },
           fontFamily: {
-            sans: ['Fraunces', 'ui-serif', 'Georgia', 'serif'],
+            sans: ['Newsreader', 'ui-serif', 'Georgia', 'serif'],
           },
           borderRadius: {
             xl2: "1rem",
-          },
-          boxShadow: {
-            sticker: "0 1px 0 rgba(7,54,66,0.06), 0 12px 24px -16px rgba(7,54,66,0.18)",
-            stickerHover: "0 1px 0 rgba(7,54,66,0.06), 0 24px 36px -18px rgba(7,54,66,0.25)",
           },
         },
       },
@@ -51,52 +49,53 @@
   </script>
   <style type="text/tailwindcss">
     @layer base {
-      html, body { background-color: theme('colors.base3'); color: theme('colors.base01'); font-feature-settings: "ss01","ss02","cv11"; font-variation-settings: "opsz" 14, "SOFT" 50; }
-      h1, h2, h3 { color: theme('colors.base02'); letter-spacing: -0.025em; font-variation-settings: "opsz" 144, "SOFT" 50; }
-      .display { font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1; }
+      html, body { background-color: theme('colors.base3'); color: theme('colors.base01'); font-variation-settings: "opsz" 16; }
+      h1, h2, h3 { color: theme('colors.base02'); letter-spacing: -0.015em; font-variation-settings: "opsz" 60; }
+      code, pre { font-family: 'Newsreader', ui-serif, Georgia, serif; font-style: italic; }
       a { color: inherit; }
       ::selection { background: theme('colors.base2'); }
-      .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 20; vertical-align: -4px; }
+      .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; font-size: 1em; vertical-align: -3px; }
     }
     @layer components {
-      .btn       { @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-base font-medium transition active:scale-[.98]; }
-      .btn-primary { @apply btn bg-base02 text-base3 hover:bg-base01 shadow-sticker; }
-      .btn-ghost   { @apply btn ring-1 ring-base02/15 text-base01 hover:bg-base2 bg-base3; }
-      .btn-link    { @apply inline-flex items-center gap-1 text-sol-blue hover:underline underline-offset-4 font-medium; }
-      .panel     { @apply rounded-3xl bg-base3 ring-1 ring-base02/10 shadow-sticker; }
-      .card      { @apply relative aspect-square rounded-3xl bg-base3 ring-1 ring-base02/10 shadow-sticker transition hover:shadow-stickerHover hover:-translate-y-1 overflow-hidden; }
-      .field     { @apply w-full rounded-2xl border-base02/15 bg-base3 text-base01 placeholder:text-base1 focus:border-base02 focus:ring-base02 px-4 py-3; }
-      .hairline  { @apply border-t border-base02/10; }
-      .chip      { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 ring-base02/10 bg-base3 text-base00 shadow-sticker; }
-      .section-soft { @apply bg-base2/50; }
-      .logo-sticker { @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-base02 text-base3 ring-1 ring-base02 shadow-sticker; }
+      .btn       { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition active:scale-[.99]; }
+      .btn-primary { @apply btn bg-base02 text-base3 hover:bg-base01; }
+      .btn-ghost   { @apply btn ring-1 ring-base1/40 text-base01 hover:bg-base2; }
+      .btn-link    { @apply inline-flex items-center gap-1 text-sol-blue hover:underline underline-offset-4; }
+      .panel     { @apply rounded-2xl bg-base3 ring-1 ring-base1/30; }
+      .card      { @apply relative aspect-square rounded-2xl bg-base3 ring-1 ring-base1/30 transition hover:ring-base1/60 hover:-translate-y-0.5 overflow-hidden; }
+      .field     { @apply w-full rounded-xl border-base1/40 bg-base3 text-base01 placeholder:text-base1 focus:border-base01 focus:ring-base01; }
+      .hairline  { @apply border-t border-base1/30; }
+      .kbd       { @apply inline-flex items-center px-1.5 py-0.5 rounded-md text-[11px] ring-1 ring-base1/40 bg-base2 text-base00; }
+      .chip      { @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] ring-1 ring-base1/40 bg-base2 text-base00; }
     }
   </style>
 </head>
 <body class="min-h-screen font-sans antialiased">
-  <header class="mx-auto max-w-6xl px-6 pt-6 pb-2 flex items-center justify-between">
-    <a href="/" class="logo-sticker">
-      <span class="material-symbols-outlined text-sol-yellow">pets</span>
-      <span class="font-bold tracking-tight">codex pet shop</span>
-    </a>
-    <nav class="flex items-center gap-2 text-sm">
-      <a href="/upload" class="btn-ghost text-sm py-2 px-4">
-        <span class="material-symbols-outlined">add</span>
-        Post a pet
+  <header class="sticky top-8 z-50 mx-auto max-w-5xl px-4 mt-6">
+    <div class="group/header flex items-center justify-between rounded-2xl bg-white/65 backdrop-blur-lg backdrop-saturate-150 ring-1 ring-white/80 shadow-[0_1px_0_rgba(255,255,255,0.7)_inset,0_18px_40px_-16px_rgba(7,54,66,0.22)] px-5 py-3 transition duration-200 ease-out hover:bg-white/75 hover:-translate-y-[1px] hover:shadow-[0_1px_0_rgba(255,255,255,0.8)_inset,0_22px_44px_-14px_rgba(7,54,66,0.28)]">
+      <a href="/" class="flex items-center gap-2 text-base02">
+        <span class="material-symbols-outlined text-sol-illini text-3xl">pets</span>
+        <span class="font-semibold tracking-tight text-xl">Codex Pet Shop</span>
       </a>
-    </nav>
+      <nav class="flex items-center gap-6 text-sm text-base00">
+        <a href="/#faq" class="hover:text-base02 transition">FAQ</a>
+        <a href="/upload" class="hover:text-base02 transition">Post</a>
+      </nav>
+    </div>
   </header>
-  <main>{% block content %}{% endblock %}</main>
+  <main class="pt-10">{% block content %}{% endblock %}</main>
   <div class="mx-auto max-w-5xl px-6 mt-12">
-    <div class="hairline"></div>
+    <img src="{{ url_for('static', filename='colorbar.png') }}"
+         alt=""
+         class="h-2 w-full object-cover"
+         aria-hidden="true" />
   </div>
-  <footer class="mx-auto max-w-5xl px-6 py-8 text-xs text-base1 flex items-center justify-between">
-    <span>made for codex pets · {{ now_year }}</span>
-    <span class="flex items-center gap-1">
+  <footer class="mx-auto max-w-5xl px-6 pt-4 pb-8 text-xs text-base1 flex items-center justify-between">
+    <span class="hidden md:inline">Codex Pet Shop</span>
+    <span>
       Made with
-      <span class="material-symbols-outlined text-[14px] text-sol-red">favorite</span>
-      by
-      <a href="https://ambersah.dev" target="_blank" rel="noopener" class="text-base00 hover:text-base02 underline-offset-4 hover:underline">AmberSah.dev</a>
+      <span class="material-symbols-outlined text-[14px] text-sol-red mx-0.5">favorite</span>
+      by <a href="https://ambersah.dev" target="_blank" rel="noopener" class="text-base00 underline underline-offset-4 hover:text-sol-red">AmberSah.dev</a>'s Codex Credits
     </span>
   </footer>
   {% block scripts %}{% endblock %}

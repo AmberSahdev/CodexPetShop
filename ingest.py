@@ -50,14 +50,12 @@ def ingest_one(pet_dir: Path) -> bool:
     if len(sprite_bytes) > config.MAX_SPRITESHEET_BYTES:
         print(f"  ✗ {pet_id}: spritesheet exceeds 2 MB"); return False
 
-    screenshot_bytes = None
-    screenshot_ext = None
-    for ext in ("png", "jpg", "jpeg", "webp", "gif"):
-        cand = pet_dir / f"screenshot.{ext}"
-        if cand.exists():
-            screenshot_bytes = cand.read_bytes()
-            screenshot_ext = "jpg" if ext == "jpeg" else ext
-            break
+    from app import make_thumbnail
+    try:
+        screenshot_bytes = make_thumbnail(sprite_bytes)
+        screenshot_ext = "png"
+    except Exception as e:
+        print(f"  ✗ {pet_id}: thumbnail generation failed ({e})"); return False
 
     store.create(
         pet_id=pet_id,

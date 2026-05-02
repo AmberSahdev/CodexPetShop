@@ -6,8 +6,7 @@
     <span class="material-symbols-outlined text-[18px]">arrow_back</span>
     back
   </a>
-  <h1 class="display text-5xl md:text-6xl font-bold tracking-tight mt-4">Post a <span class="italic text-sol-orange">pet</span></h1>
-  <p class="mt-3 italic text-base00 text-lg">three quick steps.</p>
+  <h1 class="text-4xl md:text-5xl font-semibold tracking-tight mt-4">Post a pet</h1>
 
   <form id="upload-form" class="mt-10 space-y-8" enctype="multipart/form-data">
     <div class="step" data-step="1">
@@ -48,27 +47,7 @@
       </div>
     </div>
 
-    <div class="step opacity-40 pointer-events-none" data-step="3">
-      <label class="text-sm font-medium flex items-center gap-2 text-base02">
-        <span class="step-num">3</span>
-        Add a screenshot
-      </label>
-      <p class="text-xs text-base1 mt-1 ml-7">A still image of your pet (PNG, JPG, WebP, or GIF). This is what people see in the grid.</p>
-      <div class="ml-7 mt-3">
-        <label id="shot-drop"
-               class="flex flex-col items-center justify-center gap-2 py-8 rounded-2xl ring-1 ring-dashed ring-base1/60 bg-base2/40 hover:bg-base2 transition cursor-pointer text-center">
-          <span class="material-symbols-outlined text-base1 text-3xl">image</span>
-          <span class="text-sm text-base01">Drop an image, or click to choose</span>
-          <input id="screenshot" name="screenshot" type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden" />
-        </label>
-        <div id="shot-preview-wrap" class="mt-3 hidden">
-          <img id="shot-preview" class="max-h-48 rounded-xl ring-1 ring-base1/40 bg-base3 p-1" />
-        </div>
-        <p id="shot-error" class="mt-2 text-sm text-sol-red"></p>
-      </div>
-    </div>
-
-    <div class="step opacity-40 pointer-events-none ml-7" data-step="4">
+    <div class="step opacity-40 pointer-events-none ml-7" data-step="3">
       <button id="submit-btn" type="submit" class="btn-primary" disabled>
         <span class="material-symbols-outlined">check</span>
         Post pet
@@ -81,7 +60,7 @@
 
 {% block scripts %}
 <style>
-  .step-num { display:inline-flex; align-items:center; justify-content:center; width:1.5rem; height:1.5rem; border-radius:9999px; background:#073642; color:#fdf6e3; font-size:.85rem; font-weight:700; font-style:italic; }
+  .step-num { display:inline-flex; align-items:center; justify-content:center; width:1.25rem; height:1.25rem; border-radius:9999px; background:#073642; color:#fdf6e3; font-size:.7rem; font-weight:600; }
   .drop-active { background-color: #eee8d5 !important; }
 </style>
 <script src="{{ url_for('static', filename='js/upload.js') }}"></script>

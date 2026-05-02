@@ -9,25 +9,17 @@
   const folderSummaryText = document.getElementById('folder-summary-text');
   const folderError = document.getElementById('folder-error');
 
-  const shotDrop = document.getElementById('shot-drop');
-  const shotInput = document.getElementById('screenshot');
-  const shotPreviewWrap = document.getElementById('shot-preview-wrap');
-  const shotPreview = document.getElementById('shot-preview');
-  const shotError = document.getElementById('shot-error');
-
   const submitBtn = document.getElementById('submit-btn');
   const submitError = document.getElementById('submit-error');
   const steps = [...document.querySelectorAll('.step')];
 
   const ID_RE = /^[a-z0-9-]{2,24}$/;
   const MAX_SPRITE = 2 * 1024 * 1024;
-  const MAX_SHOT = 4 * 1024 * 1024;
 
-  // Files we collect from the dropped folder; sent at submit time.
   let petJsonFile = null;
   let spritesheetFile = null;
 
-  const state = { nameOk: false, folderOk: false, shotOk: false };
+  const state = { nameOk: false, folderOk: false };
 
   function setStepActive(i, active) {
     const el = steps[i]; if (!el) return;
@@ -37,8 +29,7 @@
   function refresh() {
     setStepActive(1, state.nameOk);
     setStepActive(2, state.nameOk && state.folderOk);
-    setStepActive(3, state.nameOk && state.folderOk && state.shotOk);
-    submitBtn.disabled = !(state.nameOk && state.folderOk && state.shotOk);
+    submitBtn.disabled = !(state.nameOk && state.folderOk);
   }
 
   // ---------- Step 1: name availability ----------
@@ -130,37 +121,6 @@
     processFiles(files);
   });
 
-  // ---------- Step 3: screenshot ----------
-  function processShot(file) {
-    shotError.textContent = '';
-    shotPreviewWrap.classList.add('hidden');
-    state.shotOk = false; refresh();
-    if (!file) return;
-    if (!/^image\/(png|jpeg|webp|gif)$/.test(file.type)) {
-      shotError.textContent = "Must be PNG, JPG, WebP, or GIF."; return;
-    }
-    if (file.size > MAX_SHOT) {
-      shotError.textContent = `Too large (${(file.size/1024/1024).toFixed(2)} MB; limit 4 MB).`; return;
-    }
-    shotPreview.src = URL.createObjectURL(file);
-    shotPreviewWrap.classList.remove('hidden');
-    state.shotOk = true; refresh();
-  }
-  shotInput.addEventListener('change', () => processShot(shotInput.files[0]));
-  ['dragenter','dragover'].forEach(ev => shotDrop.addEventListener(ev, e => {
-    e.preventDefault(); e.stopPropagation(); shotDrop.classList.add('drop-active');
-  }));
-  ['dragleave','drop'].forEach(ev => shotDrop.addEventListener(ev, e => {
-    e.preventDefault(); e.stopPropagation(); shotDrop.classList.remove('drop-active');
-  }));
-  shotDrop.addEventListener('drop', e => {
-    const f = e.dataTransfer.files && e.dataTransfer.files[0];
-    if (f) {
-      const dt = new DataTransfer(); dt.items.add(f); shotInput.files = dt.files;
-      processShot(f);
-    }
-  });
-
   // ---------- Submit ----------
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -172,7 +132,6 @@
     fd.append('name', nameInput.value);
     fd.append('pet_json', petJsonFile, 'pet.json');
     fd.append('spritesheet', spritesheetFile, 'spritesheet.webp');
-    fd.append('screenshot', shotInput.files[0]);
     try {
       const res = await fetch('/upload', { method: 'POST', body: fd });
       const data = await res.json();
