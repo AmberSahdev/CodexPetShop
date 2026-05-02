@@ -17,7 +17,7 @@
   const steps = [...document.querySelectorAll('.step')];
 
   const ID_RE = /^[a-z0-9-]{2,24}$/;
-  const MAX_SPRITE = 2 * 1024 * 1024;
+  const MAX_SPRITE = 10 * 1024 * 1024;
 
   let petJsonFile = null;
   let spritesheetFile = null;
@@ -138,7 +138,7 @@
     if (!petJsonFile) return setFolderError("Folder is missing pet.json.");
     if (!spritesheetFile) return setFolderError("Folder is missing spritesheet.webp.");
     if (spritesheetFile.size > MAX_SPRITE)
-      return setFolderError(`spritesheet.webp is too large (${(spritesheetFile.size/1024/1024).toFixed(2)} MB; limit 2 MB).`);
+      return setFolderError(`spritesheet.webp is too large (${(spritesheetFile.size/1024/1024).toFixed(2)} MB; limit 10 MB).`);
     folderSummaryText.textContent = `Found pet.json + spritesheet.webp (${(spritesheetFile.size/1024).toFixed(0)} KB)`;
     folderSummary.classList.remove('hidden');
     showPreview(files);

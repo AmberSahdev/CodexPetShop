@@ -187,7 +187,7 @@ def upload_submit():
 
     sprite_bytes = sprite_file.read()
     if len(sprite_bytes) > config.MAX_SPRITESHEET_BYTES:
-        return jsonify(error="Spritesheet exceeds 2 MB."), 413
+        return jsonify(error="Spritesheet exceeds 10 MB."), 413
     if len(sprite_bytes) == 0:
         return jsonify(error="Spritesheet is empty."), 400
 
@@ -301,7 +301,7 @@ def not_found(_):
 
 @app.errorhandler(413)
 def too_large(_):
-    return jsonify(error="Upload too large (limit 2 MB)."), 413
+    return jsonify(error="Upload too large (limit 10 MB)."), 413
 
 
 if __name__ == "__main__":
