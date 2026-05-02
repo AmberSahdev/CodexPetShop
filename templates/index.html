@@ -288,7 +288,7 @@
 <section id="faq" class="mx-auto max-w-3xl px-6 mt-14 scroll-mt-24">
   <h2 class="text-sm uppercase tracking-[0.14em] text-base1 mb-4">FAQ</h2>
   <div class="panel divide-y divide-base1/30">
-    <details class="group p-5">
+    <details id="install-faq" class="group p-5">
       <summary class="flex items-center justify-between cursor-pointer list-none gap-4">
         <span class="font-medium text-base02">How do I install a pet?</span>
         {{ icon('chevron_right', 'icon text-base1 transition group-open:rotate-90') }}
@@ -565,5 +565,13 @@
       window.setTimeout(() => playRow(tile, frameMap, startRow, 0), Math.random() * 500);
     });
   })();
+
+  const installFaq = document.getElementById('install-faq');
+  if (installFaq && window.location.hash === '#install-faq') {
+    installFaq.open = true;
+    requestAnimationFrame(() => {
+      installFaq.scrollIntoView({ block: 'start' });
+    });
+  }
 </script>
 {% endblock %}
