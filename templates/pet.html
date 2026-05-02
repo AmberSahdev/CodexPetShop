@@ -2,7 +2,7 @@
 {% block title %}{{ pet.display_name }} · Codex Pet Shop{% endblock %}
 {% block meta_description %}{{ pet.description }}{% endblock %}
 {% block og_title %}{{ pet.display_name }} · Codex Pet Shop{% endblock %}
-{% block og_image %}{{ absolute_url(pet.screenshot_url or url_for('static', filename='preview.png')) }}{% endblock %}
+{% block og_image %}{{ absolute_url(pet.screenshot_url or url_for('static', filename='preview3.png')) }}{% endblock %}
 {% block og_image_alt %}Preview of {{ pet.display_name }}{% endblock %}
 {% block structured_data %}
 <script type="application/ld+json">
@@ -11,7 +11,7 @@
   "@type": "CreativeWork",
   "name": "{{ pet.display_name|e }}",
   "description": "{{ pet.description|e }}",
-  "image": "{{ absolute_url(pet.screenshot_url or url_for('static', filename='preview.png')) }}",
+  "image": "{{ absolute_url(pet.screenshot_url or url_for('static', filename='preview3.png')) }}",
   "url": "{{ canonical_request_url() }}",
   "creator": {
     "@type": "Organization",
