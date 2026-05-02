@@ -41,13 +41,13 @@
 
   .home-hero-line--soft {
     margin-top: 0.75rem;
-    color: #839496;
+    color: #ff5f05;
   }
 
   .home-grid-column {
     width: 100%;
     max-width: 36rem;
-    margin: 4rem auto 0;
+    margin: 1.5rem auto 0;
   }
 
   .home-grid {
@@ -92,6 +92,12 @@
 
   .home-grid-image--cover {
     object-fit: cover;
+  }
+
+  .home-grid-sprite-anim {
+    background-repeat: no-repeat;
+    background-size: 800% 900%;
+    image-rendering: pixelated;
   }
 
   .home-grid-sprite {
@@ -207,24 +213,24 @@
 
     <div class="home-grid-column">
       <div class="home-grid">
-    {% set visible_pets = pets[:7] %}
+    {% set visible_pets = pets[:6] %}
     {% for pet in visible_pets %}
       <a href="/p/{{ pet.id }}" class="home-grid-link" title="{{ pet.display_name }}">
         <div class="home-grid-card">
-          {% if pet.screenshot_url %}
-            <img src="{{ pet.screenshot_url }}" alt="{{ pet.display_name }}"
-                 class="home-grid-image home-grid-image--cover" />
-          {% else %}
-            <img src="{{ pet.spritesheet_url }}" alt="{{ pet.display_name }}"
-                 class="home-grid-image home-grid-sprite" />
-          {% endif %}
+          <div
+            class="home-grid-image home-grid-sprite-anim"
+            role="img"
+            aria-label="{{ pet.display_name }}"
+            data-pet-anim
+            style="background-image: url('{{ pet.spritesheet_url }}');"
+          ></div>
         </div>
         <div class="home-grid-label">
           <span>{{ pet.display_name }}</span>
         </div>
       </a>
     {% endfor %}
-    {% for _ in range(7 - visible_pets|length) %}
+    {% for _ in range(6 - visible_pets|length) %}
       <div class="block">
         <div class="home-grid-card home-grid-pending"></div>
       </div>
@@ -234,7 +240,15 @@
           {{ icon('add_circle', 'home-grid-upload-icon') }}
         </div>
         <div class="home-grid-label">
-          <span>Upload Yours</span>
+          <span>Add Your Own Pet</span>
+        </div>
+      </a>
+      <a href="/all" class="home-grid-link">
+        <div class="home-grid-card home-grid-upload">
+          {{ icon('chevron_right', 'home-grid-upload-icon') }}
+        </div>
+        <div class="home-grid-label">
+          <span>All Pets</span>
         </div>
       </a>
     </div>
@@ -397,5 +411,109 @@
       }
     });
   }
+
+  (() => {
+    const animatedPets = document.querySelectorAll('[data-pet-anim]');
+    const rowCount = 6;
+    const columnCount = 8;
+    const frameMs = 240;
+
+    const positionFor = (column, row) => {
+      const x = columnCount === 1 ? 0 : (column / (columnCount - 1)) * 100;
+      const y = (row / 8) * 100;
+      return `${x}% ${y}%`;
+    };
+
+    const loadRowFrames = (imageUrl) =>
+      new Promise((resolve) => {
+        const image = new Image();
+        image.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d', { willReadFrequently: true });
+          if (!ctx) {
+            resolve(Array.from({ length: rowCount }, () => [0, 1, 2, 3]));
+            return;
+          }
+
+          canvas.width = image.width;
+          canvas.height = image.height;
+          ctx.drawImage(image, 0, 0);
+
+          const frameWidth = Math.floor(image.width / columnCount);
+          const frameHeight = Math.floor(image.height / 9);
+          const rows = [];
+
+          for (let row = 0; row < rowCount; row += 1) {
+            const frames = [];
+            for (let column = 0; column < columnCount; column += 1) {
+              const x = column * frameWidth;
+              const y = row * frameHeight;
+              const data = ctx.getImageData(x, y, frameWidth, frameHeight).data;
+              let hasPixel = false;
+              for (let i = 3; i < data.length; i += 4) {
+                if (data[i] !== 0) {
+                  hasPixel = true;
+                  break;
+                }
+              }
+              if (hasPixel) {
+                frames.push(column);
+              }
+            }
+            rows.push(frames.length ? frames : [0]);
+          }
+
+          resolve(rows);
+        };
+        image.onerror = () => resolve(Array.from({ length: rowCount }, () => [0, 1, 2, 3]));
+        image.src = imageUrl;
+      });
+
+    const pickNextRow = (frameMap, currentRow) => {
+      const validRows = frameMap
+        .map((frames, row) => ({ row, frames }))
+        .filter(({ frames }) => frames.length > 0);
+      if (!validRows.length) return 0;
+      if (validRows.length === 1) return validRows[0].row;
+      let nextRow = currentRow;
+      while (nextRow === currentRow) {
+        nextRow = validRows[Math.floor(Math.random() * validRows.length)].row;
+      }
+      return nextRow;
+    };
+
+    const playRow = (tile, frameMap, row, repeatCount = 0) => {
+      const frames = frameMap[row];
+      if (!frames || !frames.length) return;
+      let frameIndex = 0;
+      tile.style.backgroundPosition = positionFor(frames[0], row);
+
+      const tick = () => {
+        frameIndex += 1;
+        if (frameIndex < frames.length) {
+          tile.style.backgroundPosition = positionFor(frames[frameIndex], row);
+          window.setTimeout(tick, frameMs);
+          return;
+        }
+
+        if (repeatCount < 1) {
+          window.setTimeout(() => playRow(tile, frameMap, row, repeatCount + 1), frameMs);
+          return;
+        }
+
+        const nextRow = pickNextRow(frameMap, row);
+        window.setTimeout(() => playRow(tile, frameMap, nextRow, 0), frameMs);
+      };
+
+      window.setTimeout(tick, frameMs);
+    };
+
+    animatedPets.forEach(async (tile) => {
+      const imageUrl = tile.style.backgroundImage.slice(5, -2);
+      const frameMap = await loadRowFrames(imageUrl);
+      const startRow = pickNextRow(frameMap, -1);
+      window.setTimeout(() => playRow(tile, frameMap, startRow, 0), Math.random() * 500);
+    });
+  })();
 </script>
 {% endblock %}

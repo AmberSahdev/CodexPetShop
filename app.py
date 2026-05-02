@@ -131,6 +131,15 @@ def index():
     return render_template("index.html", pets=pets, featured_count=featured_count)
 
 
+@app.route("/all")
+def all_pets():
+    pets = sorted(
+        (_decorate(p) for p in store.list_visible()),
+        key=lambda p: p.get("created_at", 0),
+    )
+    return render_template("all.html", pets=pets[:25])
+
+
 @app.route("/upload", methods=["GET"])
 def upload_form():
     return render_template("upload.html")
