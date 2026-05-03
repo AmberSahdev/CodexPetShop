@@ -5,6 +5,7 @@ import time
 from typing import Optional
 
 from google.cloud import firestore, storage
+from google.cloud.firestore_v1.base_query import FieldFilter
 from google.api_core.exceptions import AlreadyExists
 
 PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT")
@@ -86,7 +87,7 @@ def create(pet_id: str, display_name: str, description: str,
 
 def list_visible() -> list[dict]:
     out = []
-    for snap in _db.collection(COLLECTION).where("takedown", "==", False).stream():
+    for snap in _db.collection(COLLECTION).where(filter=FieldFilter("takedown", "==", False)).stream():
         d = snap.to_dict()
         if d:
             out.append(d)
@@ -105,7 +106,7 @@ def bump_download(pet_id: str) -> int:
 
 def count_visible() -> int:
     """Cheap aggregate count (1 read regardless of collection size)."""
-    agg = _db.collection(COLLECTION).where("takedown", "==", False).count().get()
+    agg = _db.collection(COLLECTION).where(filter=FieldFilter("takedown", "==", False)).count().get()
     # `agg` is list[list[AggregationResult]]
     return int(agg[0][0].value)
 

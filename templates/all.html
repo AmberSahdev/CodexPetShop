@@ -131,7 +131,7 @@
   </div>
 
   <div class="all-grid mt-8 md:mt-9">
-    {% set visible_pets = pets[:24] %}
+    {% set visible_pets = pets %}
     {% for pet in visible_pets %}
       <a href="/p/{{ pet.id }}" class="all-grid-link" title="{{ pet.display_name }}">
         <div class="all-grid-card">
@@ -156,11 +156,6 @@
         </div>
       </a>
     {% endfor %}
-    {% for _ in range(24 - visible_pets|length) %}
-      <div class="block">
-        <div class="all-grid-card"></div>
-      </div>
-    {% endfor %}
     <a href="/upload" class="all-grid-link" title="Upload Your Pet">
       <div class="all-grid-card all-grid-upload">
         {{ icon('add_circle', 'all-grid-upload-icon') }}
@@ -170,6 +165,34 @@
       </div>
     </a>
   </div>
+
+  {% if total_pages > 1 %}
+  <nav class="mt-10 flex items-center justify-between gap-4 text-sm" aria-label="Pagination">
+    {% if has_prev %}
+      <a href="{{ url_for('all_pets', page=page-1) }}" rel="prev"
+         class="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-base00 ring-1 ring-base1/40 transition hover:bg-base2 hover:text-base02">
+        {{ icon('arrow_back', 'icon text-[16px]') }} Previous
+      </a>
+    {% else %}
+      <span class="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-base1/60 ring-1 ring-base1/20 select-none">
+        {{ icon('arrow_back', 'icon text-[16px]') }} Previous
+      </span>
+    {% endif %}
+
+    <span class="text-base1">Page {{ page }} of {{ total_pages }}</span>
+
+    {% if has_next %}
+      <a href="{{ url_for('all_pets', page=page+1) }}" rel="next"
+         class="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-base00 ring-1 ring-base1/40 transition hover:bg-base2 hover:text-base02">
+        Next {{ icon('chevron_right', 'icon text-[16px]') }}
+      </a>
+    {% else %}
+      <span class="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-base1/60 ring-1 ring-base1/20 select-none">
+        Next {{ icon('chevron_right', 'icon text-[16px]') }}
+      </span>
+    {% endif %}
+  </nav>
+  {% endif %}
 
   <div class="mt-10 md:mt-12">
     <a href="/" class="inline-flex items-center gap-2 text-sm text-base1 transition hover:text-base02">

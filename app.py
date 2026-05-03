@@ -136,13 +136,34 @@ def index():
     return render_template("index.html", pets=pets, featured_count=featured_count)
 
 
+PETS_PER_PAGE = 24
+
+
 @app.route("/all")
 def all_pets():
-    pets = sorted(
+    all_sorted = sorted(
         (_decorate(p) for p in store.list_visible()),
         key=lambda p: p.get("created_at", 0),
     )
-    return render_template("all.html", pets=pets[:25])
+    total = len(all_sorted)
+    total_pages = max(1, (total + PETS_PER_PAGE - 1) // PETS_PER_PAGE)
+    try:
+        page = int(request.args.get("page", 1))
+    except ValueError:
+        page = 1
+    page = max(1, min(page, total_pages))
+    start = (page - 1) * PETS_PER_PAGE
+    pets = all_sorted[start : start + PETS_PER_PAGE]
+    return render_template(
+        "all.html",
+        pets=pets,
+        page=page,
+        total_pages=total_pages,
+        total=total,
+        per_page=PETS_PER_PAGE,
+        has_prev=page > 1,
+        has_next=page < total_pages,
+    )
 
 
 @app.route("/upload", methods=["GET"])
