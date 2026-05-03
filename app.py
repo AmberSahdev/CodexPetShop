@@ -278,6 +278,11 @@ def pet_bundle(pet_id: str):
         z.writestr("pet.json", json.dumps(manifest, indent=2))
         z.writestr("spritesheet.webp", sprite_data)
     buf.seek(0)
+    try:
+        store.bump_download(pet_id)
+    except Exception as e:
+        # Counter is best-effort: never fail the download because of it.
+        app.logger.warning("bump_download failed for %s: %s", pet_id, e)
     return send_file(buf, mimetype="application/zip", as_attachment=True,
                      download_name=f"{pet_id}.zip")
 

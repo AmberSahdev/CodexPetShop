@@ -109,9 +109,18 @@
         <a href="/#install-faq" class="underline underline-offset-4 transition hover:text-base02">How to install?</a>
       </p>
 
-      <div class="hairline mt-10 pt-4 text-xs text-base1 flex items-center gap-2">
-        {{ icon('schedule', 'icon text-[14px]') }}
-        added {{ pet.created_at | relative_time }}
+      <div class="hairline mt-10 pt-4 text-xs text-base1 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span class="inline-flex items-center gap-1">
+          {{ icon('schedule', 'icon text-[14px]') }}
+          added {{ pet.created_at | relative_time }}
+        </span>
+        {% set dl = pet.download_count or 0 %}
+        {% if dl >= 10 %}
+        <span class="inline-flex items-center gap-1">
+          {{ icon('download', 'icon text-[14px]') }}
+          {{ dl }} downloads
+        </span>
+        {% endif %}
       </div>
     </div>
   </div>

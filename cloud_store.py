@@ -93,6 +93,16 @@ def list_visible() -> list[dict]:
     return out
 
 
+def bump_download(pet_id: str) -> int:
+    """Atomic +1 on the pet's download counter. Returns the new value
+    (best-effort: requires one extra read after the increment)."""
+    ref = _db.collection(COLLECTION).document(pet_id)
+    ref.update({"download_count": firestore.Increment(1)})
+    snap = ref.get(field_paths=["download_count"])
+    d = snap.to_dict() or {}
+    return int(d.get("download_count", 0))
+
+
 def count_visible() -> int:
     """Cheap aggregate count (1 read regardless of collection size)."""
     agg = _db.collection(COLLECTION).where("takedown", "==", False).count().get()

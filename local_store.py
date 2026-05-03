@@ -79,6 +79,17 @@ def list_visible() -> list[dict]:
     return [p for p in _read_all().values() if not p.get("takedown")]
 
 
+def bump_download(pet_id: str) -> int:
+    with _lock:
+        data = _read_all()
+        pet = data.get(pet_id)
+        if not pet:
+            return 0
+        pet["download_count"] = int(pet.get("download_count", 0)) + 1
+        _write_all(data)
+        return pet["download_count"]
+
+
 def count_visible() -> int:
     return len(list_visible())
 
