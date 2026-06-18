@@ -14,6 +14,7 @@
 
   const submitBtn = document.getElementById('submit-btn');
   const submitError = document.getElementById('submit-error');
+  const uploadsPaused = form.dataset.uploadsPaused === 'true';
   const steps = [...document.querySelectorAll('.step')];
 
   const ID_RE = /^[a-z0-9-]{2,24}$/;
@@ -24,6 +25,7 @@
   let previewUrl = null;
 
   const state = { nameOk: false, folderOk: false };
+  const pauseMessage = 'Uploads are paused. New pet submissions are temporarily disabled.';
   const spinnerHtml = '<span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent align-[-0.125em]"></span>';
   const checkHtml = '<img src="/static/icons/check.svg" alt="" class="inline-block h-4 w-4 shrink-0" />';
 
@@ -35,6 +37,10 @@
   function refresh() {
     setStepActive(1, state.nameOk);
     setStepActive(2, state.nameOk && state.folderOk);
+    if (uploadsPaused) {
+      submitBtn.disabled = true;
+      return;
+    }
     submitBtn.disabled = !(state.nameOk && state.folderOk);
   }
   function clearPreview() {
@@ -169,6 +175,11 @@
   // ---------- Submit ----------
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (uploadsPaused) {
+      submitBtn.disabled = true;
+      submitError.textContent = pauseMessage;
+      return;
+    }
     if (submitBtn.disabled) return;
     submitBtn.disabled = true;
     submitBtn.innerHTML = `${spinnerHtml} Posting…`;
@@ -188,4 +199,5 @@
     submitBtn.disabled = false;
     submitBtn.innerHTML = `${checkHtml} Post pet`;
   });
+  refresh();
 })();

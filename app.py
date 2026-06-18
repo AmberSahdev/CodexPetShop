@@ -181,70 +181,77 @@ def api_check(pet_id: str):
 
 @app.route("/upload", methods=["POST"])
 def upload_submit():
-    if store.count_visible() >= config.MAX_PETS:
-        return jsonify(
-            error=f"The shop is full ({config.MAX_PETS} pets). New uploads are paused."
-        ), 503
+    return jsonify(error="Uploads are paused. New pet submissions are temporarily disabled."), 503
 
-    name = (request.form.get("name") or "").lower().strip()
-    pet_json_file = request.files.get("pet_json")
-    sprite_file = request.files.get("spritesheet")
 
-    if not name or not ID_RE.match(name):
-        return jsonify(error="Invalid name. Use 2–24 chars: a–z, 0–9, hyphen."), 400
-    if not pet_json_file:
-        return jsonify(error="Missing pet.json (drop your pet folder)."), 400
-    if not sprite_file:
-        return jsonify(error="Missing spritesheet.webp (drop your pet folder)."), 400
-
-    try:
-        manifest = json.loads(pet_json_file.read().decode("utf-8"))
-    except (UnicodeDecodeError, json.JSONDecodeError) as e:
-        return jsonify(error=f"pet.json is not valid JSON ({e})."), 400
-
-    errors = validate_pet_json(manifest)
-    if errors:
-        return jsonify(error="pet.json failed validation: " + "; ".join(errors)), 400
-
-    sprite_bytes = sprite_file.read()
-    if len(sprite_bytes) > config.MAX_SPRITESHEET_BYTES:
-        return jsonify(error="Spritesheet exceeds 10 MB."), 413
-    if len(sprite_bytes) == 0:
-        return jsonify(error="Spritesheet is empty."), 400
-
-    try:
-        with Image.open(io.BytesIO(sprite_bytes)) as im:
-            im.verify()
-        with Image.open(io.BytesIO(sprite_bytes)) as im:
-            if im.format != "WEBP":
-                return jsonify(error=f"Spritesheet must be WebP (got {im.format})."), 400
-            if im.width > config.MAX_SPRITESHEET_DIM or im.height > config.MAX_SPRITESHEET_DIM:
-                return jsonify(error=f"Spritesheet exceeds {config.MAX_SPRITESHEET_DIM}px."), 400
-    except Exception as e:
-        return jsonify(error=f"Spritesheet is not a valid image ({e})."), 400
-
-    try:
-        screenshot_bytes = make_thumbnail(sprite_bytes)
-        screenshot_ext = "png"
-    except Exception as e:
-        return jsonify(error=f"Couldn't generate thumbnail ({e})."), 400
-
-    try:
-        store.create(
-            pet_id=name,
-            display_name=manifest["displayName"],
-            description=clip_description(manifest["description"]),
-            spritesheet_bytes=sprite_bytes,
-            ip_hash=_ip_hash(request),
-            screenshot_bytes=screenshot_bytes,
-            screenshot_ext=screenshot_ext,
-        )
-    except ValueError as e:
-        if str(e) == "name_taken":
-            return jsonify(error=f'The name "{name}" is already taken.'), 409
-        raise
-
-    return jsonify(ok=True, redirect=url_for("pet_page", pet_id=name)), 200
+# Upload submission backend is paused. Keep the implementation commented here so
+# re-enabling requires an intentional code change.
+# @app.route("/upload", methods=["POST"])
+# def upload_submit():
+#     if store.count_visible() >= config.MAX_PETS:
+#         return jsonify(
+#             error=f"The shop is full ({config.MAX_PETS} pets). New uploads are paused."
+#         ), 503
+#
+#     name = (request.form.get("name") or "").lower().strip()
+#     pet_json_file = request.files.get("pet_json")
+#     sprite_file = request.files.get("spritesheet")
+#
+#     if not name or not ID_RE.match(name):
+#         return jsonify(error="Invalid name. Use 2-24 chars: a-z, 0-9, hyphen."), 400
+#     if not pet_json_file:
+#         return jsonify(error="Missing pet.json (drop your pet folder)."), 400
+#     if not sprite_file:
+#         return jsonify(error="Missing spritesheet.webp (drop your pet folder)."), 400
+#
+#     try:
+#         manifest = json.loads(pet_json_file.read().decode("utf-8"))
+#     except (UnicodeDecodeError, json.JSONDecodeError) as e:
+#         return jsonify(error=f"pet.json is not valid JSON ({e})."), 400
+#
+#     errors = validate_pet_json(manifest)
+#     if errors:
+#         return jsonify(error="pet.json failed validation: " + "; ".join(errors)), 400
+#
+#     sprite_bytes = sprite_file.read()
+#     if len(sprite_bytes) > config.MAX_SPRITESHEET_BYTES:
+#         return jsonify(error="Spritesheet exceeds 10 MB."), 413
+#     if len(sprite_bytes) == 0:
+#         return jsonify(error="Spritesheet is empty."), 400
+#
+#     try:
+#         with Image.open(io.BytesIO(sprite_bytes)) as im:
+#             im.verify()
+#         with Image.open(io.BytesIO(sprite_bytes)) as im:
+#             if im.format != "WEBP":
+#                 return jsonify(error=f"Spritesheet must be WebP (got {im.format})."), 400
+#             if im.width > config.MAX_SPRITESHEET_DIM or im.height > config.MAX_SPRITESHEET_DIM:
+#                 return jsonify(error=f"Spritesheet exceeds {config.MAX_SPRITESHEET_DIM}px."), 400
+#     except Exception as e:
+#         return jsonify(error=f"Spritesheet is not a valid image ({e})."), 400
+#
+#     try:
+#         screenshot_bytes = make_thumbnail(sprite_bytes)
+#         screenshot_ext = "png"
+#     except Exception as e:
+#         return jsonify(error=f"Couldn't generate thumbnail ({e})."), 400
+#
+#     try:
+#         store.create(
+#             pet_id=name,
+#             display_name=manifest["displayName"],
+#             description=clip_description(manifest["description"]),
+#             spritesheet_bytes=sprite_bytes,
+#             ip_hash=_ip_hash(request),
+#             screenshot_bytes=screenshot_bytes,
+#             screenshot_ext=screenshot_ext,
+#         )
+#     except ValueError as e:
+#         if str(e) == "name_taken":
+#             return jsonify(error=f'The name "{name}" is already taken.'), 409
+#         raise
+#
+#     return jsonify(ok=True, redirect=url_for("pet_page", pet_id=name)), 200
 
 
 @app.route("/healthz")
